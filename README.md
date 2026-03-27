@@ -1,6 +1,6 @@
 # Sistema Experto para la Toma de Decisiones Estratégicas en League of Legends
 
-[cite_start]Este proyecto ha sido desarrollado como parte del **Trabajo de Fin de Grado (TFG)** en el **Grado en Ingeniería Informática** con mención en **Ingeniería del Software** de la **Universidad Internacional de La Rioja (UNIR)**.
+Este proyecto ha sido desarrollado como parte del **Trabajo de Fin de Grado (TFG)** en el **Grado en Ingeniería Informática** con mención en **Ingeniería del Software** de la **Universidad Internacional de La Rioja (UNIR)**.
 
 ## Descripción
 
@@ -28,7 +28,7 @@ De acuerdo con la metodología de ingeniería, el repositorio se organiza de la 
 
 ## Licencia
 
-[cite_start]Este proyecto se publica bajo la licencia abierta **MIT**. [cite_start]El código fuente es íntegramente de elaboración propia, cumpliendo con los requisitos académicos de la titulación[cite: 869, 872].
+Este proyecto se publica bajo la licencia abierta **MIT**. El código fuente es íntegramente de elaboración propia, cumpliendo con los requisitos académicos de la titulación.
 
 ## Autor
 
@@ -36,4 +36,4 @@ De acuerdo con la metodología de ingeniería, el repositorio se organiza de la 
 
 ---
 
-[cite_start]_Nota: Este repositorio es público y su enlace figura en la portada de la memoria del TFG según la normativa vigente._
+_Nota: Este repositorio es público y su enlace figura en la portada de la memoria del TFG según la normativa vigente._
