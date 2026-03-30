@@ -251,8 +251,43 @@ def evaluate_draft(enemy_champions, ally_champions=None):
 
     champ_scores.sort(key=lambda x: x['score'], reverse=True)
 
+    # Lógica de Filtrado Inteligente de Roles
+    ally_roles = set()
+    for ally_id in ally_champions:
+        if ally_id in champs:
+            role = champs[ally_id].get('role', '').lower()
+            if role: ally_roles.add(role)
+
+    diverse_recommendations = []
+    seen_candidate_roles = set()
+
+    # 1. Buscamos 1 Pick Óptimo por cada Rol Múltiple (evitando monopolio de Toplaners, etc)
+    for champ in champ_scores:
+        r_lower = champ['role'].lower()
+        # Si el rol ya está pillado o ya hemos recomendado uno para ese hueco, lo saltamos
+        if r_lower in ally_roles or r_lower in seen_candidate_roles:
+            continue
+            
+        diverse_recommendations.append(champ)
+        seen_candidate_roles.add(r_lower)
+        
+        if len(diverse_recommendations) == 5:
+            break
+
+    # 2. Si las etiquetas no nos dan 5 por culpa de la cardinalidad de BD, rellenamos con los suplentes de puntuación más alta
+    if len(diverse_recommendations) < 5:
+        for champ in champ_scores:
+            if champ not in diverse_recommendations and champ['role'].lower() not in ally_roles:
+                diverse_recommendations.append(champ)
+            if len(diverse_recommendations) == 5:
+                break
+                
+    # 3. Fallback extremo (Para situaciones de draft irrealmente saturadas)
+    if not diverse_recommendations:
+        diverse_recommendations = champ_scores[:5]
+
     return {
         "recommended_items": recommended_items[:6],
-        "recommended_champions": champ_scores[:5],
+        "recommended_champions": diverse_recommendations,
         "explanations": engine.explanations
     }

@@ -61,8 +61,14 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ## 📅 Fase 6: Expansión de Base de Conocimientos y Despliegue DevOps
 **Estado:** Completado
-- **Carga Masiva de Hechos (JSON)**: Se escribió y ejecutó el script algorítmico `populate_champions.py` elevando el registro de la Base de Conocimientos de 11 a **37 campeones completos**. El motor cubre ahora una porción amplia de posibilidades combinatorias para la interfaz interactiva.
+- **Carga Masiva de Hechos (Riot DataDragon API)**: Ejecutado el pipeline automatizado `fetch_datadragon.py` extrayendo la información oficial del parche remoto para elevar la Base de Datos a la increíble cifra de **172 campeones al completo** presentes en el Título Oficial. El script se fusionó conservando la lógica heurística (`matchups`, `tank`, `shielding` custom tags) de la base original, posibilitando una combinatoria de cientos de miles de cruces de fase de selección.
 - **Isomorfismo de Contenedores (Docker)**: Creados `Dockerfile` y `.dockerignore`. Se ha implementado un flujo de ejecución de Grado de Producción aislando el framework Flask a través del servidor WSGI `Gunicorn` (multihilo). El proyecto es ahora oficialmente un artefacto DevOps "Deploy-Ready" (preparado para ser elevado a Google Cloud, AWS o plataformas equivalentes sin configuración adicional y respetando normas de Ciberseguridad con permisos capados `useradd`). Se añadió `gunicorn` al `requirements.txt`.
+
+## 📅 Fase 7: Algoritmo de Cohesión Espacial (Anti-Solapamiento de Roles)
+**Estado:** Completado
+- **Cálculo de Huecos Libres de Draft**: Detectado e implementado un sistema correctivo crucial en `inference.py`. El Sistema Experto original sufría de sobresaturación estadística (recomendaba los 5 mejores campeones en bruto, resultando en casos irreales como "3 Toplaners y 2 Junglas").
+- **Exclusión Mutua**: El motor iterativo ahora rastrea qué "Roles" han sido ya cubiertos en las cartas de tu Composición Aliada. Acto seguido elimina de raíz todas las recomendaciones matemáticas que pertenezcan a ese mismo Rol para evitar dobles picks.
+- **Multiversatilidad**: El output final garantiza retornar un Top 5 donde existe siempre **1 Campeón Óptimo distinto por cada Rol restante**, asegurándole al usuario (sea Support, Medio o ADC) que siempre tendrá un "Mejor Pick" específico para su calle basándose en pura Inteligencia Artificial aplicada.
 
 ---
 
