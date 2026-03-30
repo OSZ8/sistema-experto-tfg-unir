@@ -70,6 +70,12 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Exclusión Mutua**: El motor iterativo ahora rastrea qué "Roles" han sido ya cubiertos en las cartas de tu Composición Aliada. Acto seguido elimina de raíz todas las recomendaciones matemáticas que pertenezcan a ese mismo Rol para evitar dobles picks.
 - **Multiversatilidad**: El output final garantiza retornar un Top 5 donde existe siempre **1 Campeón Óptimo distinto por cada Rol restante**, asegurándole al usuario (sea Support, Medio o ADC) que siempre tendrá un "Mejor Pick" específico para su calle basándose en pura Inteligencia Artificial aplicada.
 
+## 📅 Fase 8: Mapeo de Posiciones Meta (Top, Jungla, Medio...) y Agrupación Visual
+**Estado:** Completado
+- **Reestructuración de Datos (Positions vs. Classes)**: Creado y ejecutado `assign_positions.py` reconfigurando la base de 172 campeones. Ahora la IA discierne entre la *Clase* de Riot (Ej: Mago, Asesino) y la *Posición* en el mapa donde se juega realmente ese campeón (Ej: Ahri -> Medio, Akshan -> Top/Medio).
+- **Asignación Semántica de Draft UI**: Los 5 slots de selección aliados han sido titulados (Top, Jungla, Medio, ADC, Apoyo). El motor asume ahora tácitamente el rol que le falte a la composición aliada en base a qué casillas se dejen vacías, permitiendo sobreescribir picks Flexibles (Ej. Vladimir) simplemente arrastrándolos a la casilla de "Medio" o "Top".
+- **Agrupación Modular (DOM)**: El algoritmo heurístico `evaluate_draft` ya no escupe un Top 5 genérico absoluto, sino un Array Anidado (Dict) que agrupa estructuralmente los mejores campeones (Top 3) exclusivos para cada Rol vacante. El UI renderiza esto con nuevas insignias, jerarquía y etiquetas secundarias, multiplicando las opciones estratégicas sin saturar la pantalla.
+
 ---
 
 *(Este documento se irá actualizando de forma continua cada vez que implementemos nuevos módulos o correcciones).*

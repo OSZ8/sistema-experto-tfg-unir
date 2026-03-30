@@ -627,3 +627,41 @@ body {
         bottom: -22px;
     }
 }
+
+/* Phase 8 UI additions */
+.pos-badge-ally, .pos-badge-empty {
+    position: absolute;
+    top: -24px;
+    font-size: 0.65rem;
+    color: var(--gold);
+    background: rgba(0,0,0,0.6);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--gold);
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+.pos-badge-empty {
+    color: #888;
+    border-color: #444;
+}
+
+.role-recommendation-block {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--gold);
+}
+.role-block-title {
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-shadow: 0 0 5px rgba(200, 170, 110, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

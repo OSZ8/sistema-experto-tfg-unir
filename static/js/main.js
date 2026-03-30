@@ -33,14 +33,19 @@ function renderSlots(draftArray, container, teamType) {
         const slot = document.createElement('div');
         slot.className = `draft-slot ${champ ? 'filled' : 'empty'}`;
 
+        const posLabels = ['Top', 'Jungla', 'Medio', 'ADC', 'Apoyo'];
+        const posLabel = teamType === 'ally' ? posLabels[idx] : `Rival ${idx + 1}`;
+
         if (champ) {
             slot.innerHTML = `
+                <div class="pos-badge-ally">${posLabel}</div>
                 <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" title="${champ.name}" class="slot-img fade-in">
                 <div class="slot-name">${champ.name}</div>
                 <button class="remove-slot" onclick="removeChamp('${teamType}', ${idx}, event)">×</button>
             `;
         } else {
             slot.innerHTML = `
+                <div class="pos-badge-empty">${posLabel}</div>
                 <div class="empty-plus">+</div>
             `;
         }
@@ -59,8 +64,9 @@ window.removeChamp = function (team, idx, event) {
 }
 
 function openModal(team, idx) {
+    const posLabels = ['Top', 'Jungla', 'Medio', 'ADC', 'Apoyo'];
     activeSlot = { team, index: idx };
-    modalTitle.innerText = team === 'ally' ? `Selecciona: Tu Composición (Posición ${idx + 1})` : `Selecciona: Enemigo (Posición ${idx + 1})`;
+    modalTitle.innerText = team === 'ally' ? `Selecciona: Tu Composición (Para ${posLabels[idx]})` : `Selecciona: Enemigo (Posición ${idx + 1})`;
     champSearch.value = '';
     renderRoster('');
     modal.classList.remove('hidden');
@@ -135,7 +141,11 @@ function checkAnalyzeState() {
 // -----------------------------------------
 analyzeBtn.addEventListener('click', async () => {
     const enemy_draft = enemyDraft.filter(c => c).map(c => c.id);
-    const ally_draft = allyDraft.filter(c => c).map(c => c.id);
+    const ally_draft = {};
+    const posLabels = ['Top', 'Jungla', 'Medio', 'ADC', 'Apoyo'];
+    allyDraft.forEach((c, idx) => {
+        ally_draft[posLabels[idx]] = c ? c.id : null;
+    });
 
     if (enemy_draft.length === 0) return;
 
@@ -186,24 +196,32 @@ function renderResults(data) {
         });
     }
 
-    // Lógica 2: Panel Campeones Priorizados
-    if (data.recommended_champions.length === 0) {
+    // Lógica 2: Panel Campeones Priorizados (Agrupados por Posición)
+    if (!data.recommended_champions_grouped || Object.keys(data.recommended_champions_grouped).length === 0) {
         champRes.innerHTML = '<span class="result-desc">No existen campeones óptimos calculables bajo estas métricas.</span>';
     } else {
-        const top5 = data.recommended_champions.slice(0, 5); // TFG View optimizado a Top 5
-        top5.forEach(champ => {
-            const div = document.createElement('div');
-            div.className = 'result-row result-champ fade-in';
-            div.innerHTML = `
-                <img src="${DD_URL}${champ.id}.png" class="result-icon champ-icon" alt="${champ.name}">
-                <div class="result-details">
-                    <span class="result-name">${champ.name} <span class="badge-role">${champ.role}</span></span>
-                    <span class="result-reason">${champ.reason}</span>
-                </div>
-                <div class="result-score-badge">${champ.score}%</div>
-            `;
-            champRes.appendChild(div);
-        });
+        const iconsMap = { 'Top': '🛡️', 'Jungla': '🌴', 'Medio': '🪄', 'ADC': '🏹', 'Apoyo': '💖' };
+
+        for (const [posName, candidates] of Object.entries(data.recommended_champions_grouped)) {
+            const block = document.createElement('div');
+            block.className = 'role-recommendation-block';
+            block.innerHTML = `<h4 class="role-block-title">${iconsMap[posName] || '💎'} Top 3 Mejores: ${posName.toUpperCase()}</h4>`;
+            
+            candidates.forEach(champ => {
+                const div = document.createElement('div');
+                div.className = 'result-row result-champ fade-in';
+                div.innerHTML = `
+                    <img src="${DD_URL}${champ.id}.png" class="result-icon champ-icon" alt="${champ.name}">
+                    <div class="result-details">
+                        <span class="result-name">${champ.name} <span class="badge-role">${champ.role}</span></span>
+                        <span class="result-reason">${champ.reason}</span>
+                    </div>
+                    <div class="result-score-badge">${champ.score}%</div>
+                `;
+                block.appendChild(div);
+            });
+            champRes.appendChild(block);
+        }
     }
 
     // Lógica 3: Panel Objetos Esenciales

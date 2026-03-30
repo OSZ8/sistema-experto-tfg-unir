@@ -160,9 +160,11 @@ def create_expert_system():
 
     return engine
 
-def evaluate_draft(enemy_champions, ally_champions=None):
-    if ally_champions is None:
-        ally_champions = []
+def evaluate_draft(enemy_champions, ally_champions_dict=None):
+    if ally_champions_dict is None:
+        ally_champions_dict = {}
+        
+    ally_champions = [cid for cid in ally_champions_dict.values() if cid]
         
     loader = DataLoader()
     champs = loader.get_champions()
@@ -244,50 +246,34 @@ def evaluate_draft(enemy_champions, ally_champions=None):
         champ_scores.append({
             "id": candidate_data['id'],
             "name": candidate_data['name'],
-            "role": candidate_data['role'],
+            "role": candidate_data.get('role_class', candidate_data.get('role', '')),
+            "positions": candidate_data.get('positions', []),
             "score": round(final_score, 2),
             "reason": reason
         })
 
     champ_scores.sort(key=lambda x: x['score'], reverse=True)
 
-    # Lógica de Filtrado Inteligente de Roles
-    ally_roles = set()
-    for ally_id in ally_champions:
-        if ally_id in champs:
-            role = champs[ally_id].get('role', '').lower()
-            if role: ally_roles.add(role)
+    # 1. Determinar posiciones faltantes en el equipo aliado
+    if ally_champions_dict:
+        missing_positions = [pos for pos, cid in ally_champions_dict.items() if not cid]
+    else:
+        missing_positions = ["Top", "Jungla", "Medio", "ADC", "Apoyo"]
 
-    diverse_recommendations = []
-    seen_candidate_roles = set()
-
-    # 1. Buscamos 1 Pick Óptimo por cada Rol Múltiple (evitando monopolio de Toplaners, etc)
-    for champ in champ_scores:
-        r_lower = champ['role'].lower()
-        # Si el rol ya está pillado o ya hemos recomendado uno para ese hueco, lo saltamos
-        if r_lower in ally_roles or r_lower in seen_candidate_roles:
-            continue
-            
-        diverse_recommendations.append(champ)
-        seen_candidate_roles.add(r_lower)
-        
-        if len(diverse_recommendations) == 5:
-            break
-
-    # 2. Si las etiquetas no nos dan 5 por culpa de la cardinalidad de BD, rellenamos con los suplentes de puntuación más alta
-    if len(diverse_recommendations) < 5:
+    grouped_recommendations = {}
+    
+    # 2. Para cada posición que falte, devolvemos los 3 mejores campeones (sin repetir posiciones dentro del bloque)
+    for pos in missing_positions:
+        pos_candidates = []
         for champ in champ_scores:
-            if champ not in diverse_recommendations and champ['role'].lower() not in ally_roles:
-                diverse_recommendations.append(champ)
-            if len(diverse_recommendations) == 5:
+            if pos in champ['positions']:
+                pos_candidates.append(champ)
+            if len(pos_candidates) == 3:
                 break
-                
-    # 3. Fallback extremo (Para situaciones de draft irrealmente saturadas)
-    if not diverse_recommendations:
-        diverse_recommendations = champ_scores[:5]
+        grouped_recommendations[pos] = pos_candidates
 
     return {
         "recommended_items": recommended_items[:6],
-        "recommended_champions": diverse_recommendations,
+        "recommended_champions_grouped": grouped_recommendations,
         "explanations": engine.explanations
     }
