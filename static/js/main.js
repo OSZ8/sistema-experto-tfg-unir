@@ -1,151 +1,248 @@
-const champSelect = document.getElementById('champ-select');
-const addChampBtn = document.getElementById('add-champ-btn');
-const enemyDraftBox = document.getElementById('enemy-draft');
+// Constante Académica estática para garantizar la presentación offline en DDragon
+const DD_VERSION = '14.6.1';
+const DD_URL = `https://ddragon.leagueoflegends.com/cdn/${DD_VERSION}/img/champion/`;
+
+let CHAMPIONS_DATA = [];
+let allyDraft = [null, null, null, null, null];
+let enemyDraft = [null, null, null, null, null];
+let activeSlot = null; // Guardará a qué equipo y slot corresponde el popup Modal
+
+// DOM Pointers
+const allyContainer = document.getElementById('ally-slots');
+const enemyContainer = document.getElementById('enemy-slots');
 const analyzeBtn = document.getElementById('analyze-btn');
-const resultsArea = document.getElementById('results-area');
-const resultsLoader = document.getElementById('results-loader');
+const draftWarning = document.getElementById('draft-warning');
 
-const explanationsList = document.getElementById('explanations-list');
-const champResults = document.getElementById('champ-results');
-const itemResults = document.getElementById('item-results');
+// Modal Elements
+const modal = document.getElementById('roster-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const champSearch = document.getElementById('champ-search');
+const rosterGrid = document.getElementById('champion-roster');
+const modalTitle = document.getElementById('modal-title');
 
-let currentDraft = [];
+// Startup UI Builder
+function initSlots() {
+    renderSlots(allyDraft, allyContainer, 'ally');
+    renderSlots(enemyDraft, enemyContainer, 'enemy');
+    checkAnalyzeState();
+}
 
-function updateUI() {
-    enemyDraftBox.innerHTML = '';
-    currentDraft.forEach((champ, index) => {
-        const dItem = document.createElement('div');
-        dItem.className = 'draft-item';
-        dItem.innerHTML = `
-            <span>${champ.name}</span>
-            <button class="remove-btn" onclick="removeChamp(${index})">×</button>
-        `;
-        enemyDraftBox.appendChild(dItem);
+function renderSlots(draftArray, container, teamType) {
+    container.innerHTML = '';
+    draftArray.forEach((champ, idx) => {
+        const slot = document.createElement('div');
+        slot.className = `draft-slot ${champ ? 'filled' : 'empty'}`;
+
+        if (champ) {
+            slot.innerHTML = `
+                <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" title="${champ.name}" class="slot-img fade-in">
+                <div class="slot-name">${champ.name}</div>
+                <button class="remove-slot" onclick="removeChamp('${teamType}', ${idx}, event)">×</button>
+            `;
+        } else {
+            slot.innerHTML = `
+                <div class="empty-plus">+</div>
+            `;
+        }
+
+        slot.onclick = () => openModal(teamType, idx);
+        container.appendChild(slot);
     });
+}
 
-    if (currentDraft.length > 0) {
+// Global actions
+window.removeChamp = function (team, idx, event) {
+    event.stopPropagation(); // Evitar que el click se cuele y abra el popup encima de la x
+    if (team === 'ally') allyDraft[idx] = null;
+    else enemyDraft[idx] = null;
+    initSlots();
+}
+
+function openModal(team, idx) {
+    activeSlot = { team, index: idx };
+    modalTitle.innerText = team === 'ally' ? `Selecciona: Tu Composición (Posición ${idx + 1})` : `Selecciona: Enemigo (Posición ${idx + 1})`;
+    champSearch.value = '';
+    renderRoster('');
+    modal.classList.remove('hidden');
+    champSearch.focus();
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    activeSlot = null;
+}
+
+closeModalBtn.onclick = closeModal;
+modal.querySelector('.modal-bg').onclick = closeModal;
+
+// Input en tiempo real de cuadrícula
+champSearch.addEventListener('input', (e) => {
+    renderRoster(e.target.value.toLowerCase());
+});
+
+function renderRoster(filterText) {
+    rosterGrid.innerHTML = '';
+
+    // Evitar que elijamos campeones que ya están escogidos en la partida
+    const allPickedIds = [...allyDraft.filter(c => c).map(c => c.id), ...enemyDraft.filter(c => c).map(c => c.id)];
+
+    CHAMPIONS_DATA.forEach(champ => {
+        if (champ.name.toLowerCase().includes(filterText)) {
+            const isPicked = allPickedIds.includes(champ.id);
+            const div = document.createElement('div');
+            div.className = `roster-item ${isPicked ? 'disabled' : ''}`;
+
+            // Efecto fallback si falla Riot localmente para el TFG (muestra alt text)
+            div.innerHTML = `
+                <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" loading="lazy">
+                <span>${champ.name}</span>
+            `;
+
+            if (!isPicked) {
+                div.onclick = () => selectChampion(champ);
+            }
+            rosterGrid.appendChild(div);
+        }
+    });
+}
+
+function selectChampion(champ) {
+    if (!activeSlot) return;
+    if (activeSlot.team === 'ally') {
+        allyDraft[activeSlot.index] = champ;
+    } else {
+        enemyDraft[activeSlot.index] = champ;
+    }
+    closeModal();
+    initSlots();
+}
+
+function checkAnalyzeState() {
+    const enemies = enemyDraft.filter(c => c).length;
+    if (enemies > 0) {
         analyzeBtn.disabled = false;
         analyzeBtn.classList.remove('disabled');
+        draftWarning.classList.add('hidden');
     } else {
         analyzeBtn.disabled = true;
         analyzeBtn.classList.add('disabled');
-        resultsArea.classList.add('hidden');
-    }
-
-    if (currentDraft.length >= 5) {
-        addChampBtn.disabled = true;
-    } else {
-        addChampBtn.disabled = false;
+        draftWarning.classList.remove('hidden');
     }
 }
 
-addChampBtn.addEventListener('click', () => {
-    if (champSelect.value && currentDraft.length < 5) {
-        const id = champSelect.value;
-        const nameText = champSelect.options[champSelect.selectedIndex].text.split(' - ')[0];
-
-        if (!currentDraft.find(c => c.id === id)) {
-            currentDraft.push({ id, name: nameText });
-            updateUI();
-        } else {
-            alert('El campeón ya está en el draft.');
-        }
-    }
-});
-
-// Need to make removeChamp global for inline onclick
-window.removeChamp = function (index) {
-    currentDraft.splice(index, 1);
-    updateUI();
-}
-
+// -----------------------------------------
+// REST API Communication a Backend App.py
+// -----------------------------------------
 analyzeBtn.addEventListener('click', async () => {
-    if (currentDraft.length === 0) return;
+    const enemy_draft = enemyDraft.filter(c => c).map(c => c.id);
+    const ally_draft = allyDraft.filter(c => c).map(c => c.id);
 
-    resultsArea.classList.add('hidden');
-    resultsLoader.classList.remove('hidden');
+    if (enemy_draft.length === 0) return;
 
-    const enemy_draft = currentDraft.map(c => c.id);
+    document.getElementById('results-area').classList.add('hidden');
+    document.getElementById('results-loader').classList.remove('hidden');
 
     try {
         const response = await fetch('/api/recommend', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ enemy_draft })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enemy_draft, ally_draft })
         });
 
         const data = await response.json();
+
+        // Validación del escudo defensivo 400
         if (data.success) {
             renderResults(data.data);
         } else {
-            alert("Error: " + data.error);
+            alert("Respuesta de API denegada: " + data.error);
         }
     } catch (e) {
         console.error(e);
-        alert("Fallo de comunicación con la API del Sis. Experto.");
+        alert("Fallo de infraestructura con el Backend Sistema Experto.");
     } finally {
-        resultsLoader.classList.add('hidden');
+        document.getElementById('results-loader').classList.add('hidden');
     }
 });
 
 function renderResults(data) {
-    explanationsList.innerHTML = '';
-    champResults.innerHTML = '';
-    itemResults.innerHTML = '';
+    const expList = document.getElementById('explanations-list');
+    const champRes = document.getElementById('champ-results');
+    const itemRes = document.getElementById('item-results');
+    const resultsArea = document.getElementById('results-area');
 
+    expList.innerHTML = '';
+    champRes.innerHTML = '';
+    itemRes.innerHTML = '';
+
+    // Lógica 1: Explicaciones Teóricas
     if (!data.explanations || data.explanations.length === 0) {
-        explanationsList.innerHTML = '<li>No se han detectado combinaciones críticas. Se recomienda una build estándar balanceada.</li>';
+        expList.innerHTML = '<li>No se han detonado reglas críticas en tu contra. Sinergia estándar.</li>';
     } else {
         data.explanations.forEach(exp => {
             const li = document.createElement('li');
             li.textContent = exp;
-            explanationsList.appendChild(li);
+            expList.appendChild(li);
         });
     }
 
+    // Lógica 2: Panel Campeones Priorizados
     if (data.recommended_champions.length === 0) {
-        champResults.innerHTML = '<span class="result-desc">No hay recomendaciones disponibles o todos están pickeados.</span>';
+        champRes.innerHTML = '<span class="result-desc">No existen campeones óptimos calculables bajo estas métricas.</span>';
     } else {
-        data.recommended_champions.forEach(champ => {
+        const top5 = data.recommended_champions.slice(0, 5); // TFG View optimizado a Top 5
+        top5.forEach(champ => {
             const div = document.createElement('div');
-            div.className = 'result-item';
+            div.className = 'result-row result-champ fade-in';
             div.innerHTML = `
-                <div class="result-item-header">
-                    <span class="result-name">${champ.name} (${champ.role})</span>
-                    <span class="result-score">WR Ponderado: ${champ.score}%</span>
+                <img src="${DD_URL}${champ.id}.png" class="result-icon champ-icon" alt="${champ.name}">
+                <div class="result-details">
+                    <span class="result-name">${champ.name} <span class="badge-role">${champ.role}</span></span>
+                    <span class="result-reason">${champ.reason}</span>
                 </div>
-                <span class="result-desc">${champ.reason}</span>
+                <div class="result-score-badge">${champ.score}%</div>
             `;
-            champResults.appendChild(div);
+            champRes.appendChild(div);
         });
     }
 
+    // Lógica 3: Panel Objetos Esenciales
     if (data.recommended_items.length === 0) {
-        itemResults.innerHTML = '<span class="result-desc">No hay objetos críticos específicos recomendados para esta comp.</span>';
+        itemRes.innerHTML = '<span class="result-desc">El draft rival no requiere alteraciones dramáticas de inventario.</span>';
     } else {
         data.recommended_items.forEach(item => {
             const tags = item.matching_tags ? item.matching_tags.join(', ') : '';
-            const desc = item.description || '';
             const div = document.createElement('div');
-            div.className = 'result-item';
+            div.className = 'result-row result-item-row fade-in';
+
+            // Se usa el nombre del item como identificador o un fallback
             div.innerHTML = `
-                <div class="result-item-header">
-                    <span class="result-name">${item.name}</span>
-                    <span class="result-score">Relevancia: ${item.score}</span>
+                <div class="result-details">
+                    <span class="result-name item-name">${item.name}</span>
+                    <span class="result-reason">${item.description}</span>
+                    <span class="item-tags-meta">Contramedida activada por Tag/s: <b style="color:#fff">${tags}</b></span>
                 </div>
-                <span class="result-desc" style="margin-bottom:0.5rem">${desc}</span>
-                <span class="result-desc">Específico para: ${tags}</span>
+                <div class="item-score">Relevancia: ${item.score}</div>
             `;
-            itemResults.appendChild(div);
+            itemRes.appendChild(div);
         });
     }
 
-    // Smooth scroll down to results
+    resultsArea.classList.remove('hidden');
     setTimeout(() => {
         resultsArea.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-
-    resultsArea.classList.remove('hidden');
+    }, 150);
 }
+
+// Start application
+async function startApp() {
+    try {
+        const response = await fetch('/api/champions');
+        CHAMPIONS_DATA = await response.json();
+        initSlots();
+    } catch (e) {
+        console.error("Error al arrancar el DataDragon local:", e);
+    }
+}
+
+startApp();

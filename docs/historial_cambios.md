@@ -53,4 +53,12 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
+## 📅 Fase 5: Rediseño Premium de Interfaz Web (UI/UX)
+**Estado:** Completado
+- **Arquitectura de Interfaz 5v5**: Se sustituyó el selector obsoleto HTML estático (`<select>`) por un diseño de "Arena de Draft". 
+- **Integración DataDragon (CDN)**: La aplicación web extrae renderizados de escudos (Assets PNG) directamente desde la API estática de parche remoto (`14.6.1`) inyectándolos en un Roster fotográfico de campeones con barra de búsqueda para la selección.
+- **Glassmorphism y Estilo**: Migración de `styles.css` a estándares WebGL / e-sports UI usando gradientes dorados (`--gold`), contornos `hextech` (`--cyan`), animaciones de Hover y un modelo responsivo. Todo el output del Sistema Experto (el informe devuelto por Python) aparece con animaciones de opacidad (fade-in) e inyección de miniaturas.
+
+---
+
 *(Este documento se irá actualizando de forma continua cada vez que implementemos nuevos módulos o correcciones).*

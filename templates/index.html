@@ -10,66 +10,90 @@
 </head>
 
 <body>
-    <div class="background-overlay"></div>
+    <div class="background-global"></div>
+
+    <!-- Módulo Central -->
     <main class="container">
-        <header class="glass-panel text-center pulse-glow">
-            <h1>Sistema Experto de League of Legends</h1>
-            <p>Trabajo de Fin de Grado - <span class="highlight">Oscar Sánchez García</span></p>
+        <header class="text-center slide-up">
+            <h1 class="hex-title">Draft Hextécnico</h1>
+            <p class="subtitle">Motor de Inferencia Estratégica 5v5 - TFG Oscar Sánchez</p>
         </header>
 
-        <section class="selection-area glass-panel slide-up">
-            <h2>Selecciona el Draft Enemigo</h2>
-            <p class="subtitle">Añade hasta 5 campeones enemigos al simulador para disparar las reglas de inferencia.
-            </p>
-
-            <div class="champion-selector">
-                <select id="champ-select" class="hextech-input">
-                    <option value="" disabled selected>Selecciona un campeón de la lista...</option>
-                    {% for champ in champions %}
-                    <option value="{{ champ.id }}">{{ champ.name }} - {{ champ.role }}</option>
-                    {% endfor %}
-                </select>
-                <button id="add-champ-btn" class="btn-hextech">Añadir al Draft</button>
+        <section class="draft-arena">
+            <!-- Ally Team -->
+            <div class="team-panel ally-panel">
+                <h2 class="team-title ally-title">TU EQUIPO (Sinergia)</h2>
+                <div class="slots-container" id="ally-slots">
+                    <!-- JS Inyecta 5 Slots -->
+                </div>
             </div>
 
-            <div class="draft-slots" id="enemy-draft">
-                <!-- Se inyectan items via JS -->
+            <!-- Enemy Team -->
+            <div class="team-panel enemy-panel">
+                <h2 class="team-title enemy-title">EQUIPO RIVAL (Amenazas)</h2>
+                <div class="slots-container" id="enemy-slots">
+                    <!-- JS Inyecta 5 Slots -->
+                </div>
             </div>
-
-            <button id="analyze-btn" class="btn-hextech primary-btn disabled" disabled>Analizar Composición</button>
         </section>
+
+        <div class="action-panel text-center fade-in">
+            <button id="analyze-btn" class="btn-hextech primary-btn disabled" disabled>
+                ANALIZAR DRAFT
+            </button>
+            <p id="draft-warning" class="draft-warning hidden">Selecciona al menos un enemigo para activar el motor.</p>
+        </div>
 
         <div id="results-loader" class="loader hidden">
             <div class="spinner"></div>
-            <p>Evaluando Árbol de Reglas...</p>
+            <p>Procesando Árbol de Decisión Matemático...</p>
         </div>
 
         <section id="results-area" class="results-area hidden glass-panel fade-in">
-            <h2>Resultados del Sistema Experto</h2>
+            <div class="results-header">
+                <h2>Cálculo del Sistema Experto</h2>
+            </div>
 
             <div class="rules-box">
-                <h3><i class="icon">📜</i> Reglas Disparadas (Justificación)</h3>
-                <ul id="explanations-list" class="explanations-list">
-                    <!-- Se inyectan reglas -->
-                </ul>
+                <h3><i class="icon">🔍</i> Análisis Heurístico (Reglas Aplicadas)</h3>
+                <ul id="explanations-list" class="explanations-list"></ul>
             </div>
 
             <div class="grid-2">
                 <div class="result-box">
-                    <h3><i class="icon">⚔️</i> Campeones Recomendados</h3>
-                    <p class="subtitle-small">Basado en porcentajes de victoria y matchups.</p>
+                    <h3><i class="icon">⚔️</i> Mejores Campeones</h3>
+                    <p class="subtitle-small">Filtrados por Rol, Counters y Sinergia de Composición.</p>
                     <div id="champ-results" class="results-list"></div>
                 </div>
 
                 <div class="result-box">
-                    <h3><i class="icon">🛡️</i> Objetos Recomendados</h3>
-                    <p class="subtitle-small">Basado en el motor iterativo de tags y reglas.</p>
+                    <h3><i class="icon">🛡️</i> Objetos Esenciales</h3>
+                    <p class="subtitle-small">Armamento táctico óptimo frente a la estrategia rival.</p>
                     <div id="item-results" class="results-list"></div>
                 </div>
             </div>
         </section>
-
     </main>
+
+    <!-- Modal Roster Selección -->
+    <div id="roster-modal" class="modal hidden">
+        <div class="modal-bg"></div>
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2 id="modal-title">Seleccionar Campeón</h2>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-search">
+                <input type="text" id="champ-search" class="hextech-input"
+                    placeholder="Escribe para buscar un campeón..." autocomplete="off">
+            </div>
+            <div class="champion-roster" id="champion-roster">
+                <!-- JS Inyecta iconos DataDragon -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Inyección de código JS cliente puro -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 

@@ -8,9 +8,13 @@ loader = DataLoader()
 
 @app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/api/champions', methods=['GET'])
+def get_champions():
     champions = loader.get_champions()
     champs_list = sorted([vars for key, vars in champions.items()], key=lambda x: x['name'])
-    return render_template('index.html', champions=champs_list)
+    return jsonify(champs_list)
 
 @app.route('/api/recommend', methods=['POST'])
 def recommend():
