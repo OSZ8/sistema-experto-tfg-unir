@@ -59,6 +59,11 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Integración DataDragon (CDN)**: La aplicación web extrae renderizados de escudos (Assets PNG) directamente desde la API estática de parche remoto (`14.6.1`) inyectándolos en un Roster fotográfico de campeones con barra de búsqueda para la selección.
 - **Glassmorphism y Estilo**: Migración de `styles.css` a estándares WebGL / e-sports UI usando gradientes dorados (`--gold`), contornos `hextech` (`--cyan`), animaciones de Hover y un modelo responsivo. Todo el output del Sistema Experto (el informe devuelto por Python) aparece con animaciones de opacidad (fade-in) e inyección de miniaturas.
 
+## 📅 Fase 6: Expansión de Base de Conocimientos y Despliegue DevOps
+**Estado:** Completado
+- **Carga Masiva de Hechos (JSON)**: Se escribió y ejecutó el script algorítmico `populate_champions.py` elevando el registro de la Base de Conocimientos de 11 a **37 campeones completos**. El motor cubre ahora una porción amplia de posibilidades combinatorias para la interfaz interactiva.
+- **Isomorfismo de Contenedores (Docker)**: Creados `Dockerfile` y `.dockerignore`. Se ha implementado un flujo de ejecución de Grado de Producción aislando el framework Flask a través del servidor WSGI `Gunicorn` (multihilo). El proyecto es ahora oficialmente un artefacto DevOps "Deploy-Ready" (preparado para ser elevado a Google Cloud, AWS o plataformas equivalentes sin configuración adicional y respetando normas de Ciberseguridad con permisos capados `useradd`). Se añadió `gunicorn` al `requirements.txt`.
+
 ---
 
 *(Este documento se irá actualizando de forma continua cada vez que implementemos nuevos módulos o correcciones).*
