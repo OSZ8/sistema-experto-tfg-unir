@@ -78,6 +78,54 @@ def create_expert_system():
         description="Alta presencia de daño mágico enemigo. Las opciones de Resistencia Mágica aumentarán mucho la supervivencia."
     ))
 
+    # Rule 5: Anti-Shields
+    def cond_shields(facts):
+        for f in facts:
+            if f.key == 'enemy_champion_tag' and f.value == 'shielding':
+                return True
+        return False
+
+    def act_shields(e):
+        e.add_fact(Fact('recommend_item_tag', 'anti_shield'))
+
+    engine.add_rule(Rule(
+        name="Regla Anti-Escudos",
+        condition=cond_shields,
+        action=act_shields,
+        description="Fuerte presencia de mitigación y escudos en el equipo enemigo. Recomendado adquirir Rompe-Escudos."
+    ))
+
+    # Rule 6: Tenacity (Anti CC)
+    def cond_cc(facts):
+        cc_count = sum(1 for f in facts if f.key == 'enemy_champion_tag' and f.value == 'cc_heavy')
+        return cc_count >= 2
+
+    def act_cc(e):
+        e.add_fact(Fact('recommend_item_tag', 'tenacity'))
+
+    engine.add_rule(Rule(
+        name="Regla Tenacidad",
+        condition=cond_cc,
+        action=act_cc,
+        description="El enemigo posee un alto Control de Adversario (CC). Priorizar opciones de Tenacidad o Limpiar es crítico."
+    ))
+
+    # Rule 7: Survival / Anti-Assassin
+    def cond_assassin(facts):
+        assassin_count = sum(1 for f in facts if f.key == 'enemy_champion_tag' and f.value == 'assassin')
+        return assassin_count >= 1
+
+    def act_assassin(e):
+        e.add_fact(Fact('recommend_item_tag', 'survival'))
+        e.add_fact(Fact('recommend_item_tag', 'anti_assassin'))
+
+    engine.add_rule(Rule(
+        name="Regla Supervivencia",
+        condition=cond_assassin,
+        action=act_assassin,
+        description="El oponente cuenta con Asesinos de daño explosivo. Necesitas objetos de Supervivencia extrema y Estasis temporal."
+    ))
+
     return engine
 
 def evaluate_draft(enemy_champions, ally_champions=None):

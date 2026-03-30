@@ -81,5 +81,42 @@
     ],
     "description": "Versión temprana de la Malla de Espinas.",
     "icon": "bramble_vest.png"
+  },
+  "Colmillo de Serpiente": {
+    "id": "Colmillo de Serpiente",
+    "name": "Colmillo de Serpiente",
+    "tags": [
+      "anti_shield",
+      "physical_damage",
+      "assassin",
+      "armor_penetration"
+    ],
+    "description": "Reduce los escudos aplicados a los enemigos. Esencial contra composiciones con mucha mitigación o encantadores.",
+    "icon": "serpents_fang.png"
+  },
+  "Reloj de Arena de Zhonya": {
+    "id": "Reloj de Arena de Zhonya",
+    "name": "Reloj de Arena de Zhonya",
+    "tags": [
+      "anti_assassin",
+      "survival",
+      "armor",
+      "magic_damage",
+      "mage"
+    ],
+    "description": "Te vuelve invulnerable durante unos segundos. Crucial para sobrevivir el daño explosivo de los asesinos.",
+    "icon": "zhonyas_hourglass.png"
+  },
+  "Botas de Mercurio": {
+    "id": "Botas de Mercurio",
+    "name": "Botas de Mercurio",
+    "tags": [
+      "tenacity",
+      "anti_cc",
+      "magic_resist",
+      "mobility"
+    ],
+    "description": "Otorga tenacidad, reduciendo la duración del Control de Adversario recibido.",
+    "icon": "mercurys_treads.png"
   }
 }

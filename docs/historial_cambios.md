@@ -1,0 +1,45 @@
+# Historial de Cambios y Progreso del Desarrollo (TFG)
+
+Este documento centraliza todos los hitos, decisiones arquitectónicas y módulos desarrollados para el Sistema Experto de League of Legends. Servirá como bitácora y base teórica para la redacción de la memoria del Trabajo de Fin de Grado.
+
+---
+
+## 📅 Fase 0: Arquitectura Base Inicial
+**Estado:** Completado
+- **Backend**: Despliegue de Flask (`app.py`) y creación de Endpoints REST (`/api/recommend`).
+- **Frontend**: Prototipo estático de UI/UX con Glassmorphism (`index.html`, `styles.css`) implementando selectores clásicos.
+- **Base de Hechos (DB)**: Almacenamiento JSON para el diccionario de campeones (`champions.json`) e ítems (`items.json`).
+- **Motor de Inferencia Inicial**: Construcción de `engine/knowledge_base.py` (Clases `Engine`, `Fact`, `Rule`) y el núcleo en `engine/inference.py` con 4 reglas básicas (Curaciones, Tanques, Ataques Básicos y Magia).
+
+---
+
+## 📅 Fase 1: Arquitectura de Datos (Data Entry & ETL)
+**Estado:** Completado
+- **Aproximación Teórica**: Se realizó una investigación sobre Web Scraping (U.GG) y se construyó una Prueba de Concepto (`riot_api_poc.py`). Se determinó que para los *matchups* específicos, el coste técnico de Big Data / Anti-Bots (Cloudflare) excede la viabilidad del TFG.
+- **Decisión Arquitectónica**: Implementación de un modelo Mixto:
+  -  Extracción estática automatizada de roles y campeones mediante la conectividad a la API oficial **Riot DataDragon** (`fetch_datadragon.py`).
+  -  Inyección manual por parte del Experto (Data Entry Humano) de `matchups`, `winrates` y `tags`.
+- **Estandarización de Conocimiento**: Creación de `docs/diccionario_etiquetas.md` para unificar cómo el motor debe referirse a reglas personalizadas (`healing_self`, `magic_damage`, etc.).
+
+---
+
+## 📅 Fase 2: Expansión de la Base de Conocimiento (Nuevas Reglas)
+**Estado:** Completado
+- Se amplió la capacidad deductiva del sistema inyectando en `data/items.json`:
+  1. *Colmillo de Serpiente* (Contraescudos).
+  2. *Botas de Mercurio* (Tenacidad Anti-Control).
+  3. *Reloj de Arena de Zhonya* (Supervivencia y Anti-Asesinos).
+- Se crearon 3 **Nuevas Reglas** en el Forward Chaining del `inference.py` que detonan al detectar los tags `shielding`, `cc_heavy`, `assassin`.
+
+---
+
+## 📅 Fase 3: Validación Académica (Testing Automático)
+**Estado:** Completado
+- **Bug Fix Crítico**: Refactorizada la clase `Engine` en el motor base. Anteriormente empleaba un `Set()` (conjuntos únicos) para almacenar los hechos (Facts), lo que provocaba que la acumulación de múltiples campeones con el mismo rol (p. ej. Dos tanques) fuesen colapsados en un único hecho, bloqueando contadores condicionales. 
+- **Suite de Pruebas**: Implantación del marco `pytest` para testing automático.
+- **Scripts de Validación**: Creación de `tests/test_inference.py`. Usando metodologías "Mock" inyectamos hechos ficticios desconectados de la base de datos real para evaluar la resiliencia algorítmica. 
+- **Cobertura**: 8 de 8 tests pasados exitosamente analizando cruces y flujos lógicos.
+
+---
+
+*(Este documento se irá actualizando de forma continua cada vez que implementemos nuevos módulos o correcciones).*

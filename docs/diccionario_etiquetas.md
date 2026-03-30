@@ -23,6 +23,9 @@ Estas son las etiquetas que **debes** añadir a mano en la propiedad `tags` de l
 | `healing_support`| **Anti-Curaciones** | El campeón ejerce curación constante o masiva sobre sus aliados. | Soraka, Yuumi, Sona, Nami |
 | `auto_attacker` | **Anti-Ataques Básicos** | Gran parte de su impacto DPS viene de auto-ataques (dependen de su velocidad de ataque o crítico). | Tryndamere, Master Yi, Jinx, Vayne |
 | `magic_damage` | **Resistencia Mágica** | Producen daño mágico masivo u omnipresente. (A veces un Tank genera gran daño mágico compensatorio) | Sylas, Malphite, Karthus, Gwen |
+| `shielding` | **Anti-Escudos** | Capacidad masiva para escudar a aliados o a sí mismos. | Janna, Lulu, Karma, Ivern |
+| `cc_heavy` | **Tenacidad** | Aplican mucho control de adversario inmovilizador (Stun, Root, Knockup). | Leona, Nautilus, Sejuani, Maokai |
+| `assassin` | **Supervivencia / Anti-Asesinos** | Infligen daño explosivo letal *(Tag Nativo pero procesado)*. | Zed, Talon, Katarina, Akali |
 
 > *Nota rápida:* Fíjate que el Tag nativo de "tank" y el Tag nativo de "marksman" ya se están usando como disparador para Anti-Tanque y Anti-AA. 
 

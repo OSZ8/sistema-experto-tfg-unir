@@ -21,13 +21,13 @@ class Rule:
 
 class Engine:
     def __init__(self):
-        self.facts = set()
+        self.facts = []
         self.rules = []
         self.triggered_rules = set()
         self.explanations = []
 
     def add_fact(self, fact):
-        self.facts.add(fact)
+        self.facts.append(fact)
 
     def add_rule(self, rule):
         self.rules.append(rule)
