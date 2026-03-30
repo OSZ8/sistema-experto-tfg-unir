@@ -76,6 +76,12 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Asignación Semántica de Draft UI**: Los 5 slots de selección aliados han sido titulados (Top, Jungla, Medio, ADC, Apoyo). El motor asume ahora tácitamente el rol que le falte a la composición aliada en base a qué casillas se dejen vacías, permitiendo sobreescribir picks Flexibles (Ej. Vladimir) simplemente arrastrándolos a la casilla de "Medio" o "Top".
 - **Agrupación Modular (DOM)**: El algoritmo heurístico `evaluate_draft` ya no escupe un Top 5 genérico absoluto, sino un Array Anidado (Dict) que agrupa estructuralmente los mejores campeones (Top 3) exclusivos para cada Rol vacante. El UI renderiza esto con nuevas insignias, jerarquía y etiquetas secundarias, multiplicando las opciones estratégicas sin saturar la pantalla.
 
+## 📅 Fase 9: Transparencia "Explainable AI" (XAI) y Modo Debugger
+**Estado:** Completado
+- **XAI Implementado (`engine/knowledge_base.py`)**: Alterada profundamente la estructura de las reglas lógicas (Forward Chaining). Ahora la clase `Fact` guarda el parámetro `source` de "Quién" generó la regla. `Engine.run` ahora interpola dinámicamente dichos orígenes en las explicaciones.
+- **Traceabilidad**: Ya no dice "Comprar Armadura porque hay atacantes físicos". Ahora indica "Alerta Regla Anti-Ataques Básicos disparada por presencia de Tiradores/ADCs: [Xayah, Vayne]." Nivel académico Matrícula TFG.
+- **Terminal de Debug TFG**: Implementado un botón "Ver Tripas Matemáticas (Debug)" al pie de página que despliega una consola Hextécnica de log de terminal. Imprime en formato JSON raw la puntuación algorítmica y los Matchups sin procesar para enseñarlo al Tribunal.
+
 ---
 
 *(Este documento se irá actualizando de forma continua cada vez que implementemos nuevos módulos o correcciones).*

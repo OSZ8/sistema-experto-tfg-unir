@@ -13,6 +13,17 @@ const enemyContainer = document.getElementById('enemy-slots');
 const analyzeBtn = document.getElementById('analyze-btn');
 const draftWarning = document.getElementById('draft-warning');
 
+// Debug Console Elements
+const toggleDebugBtn = document.getElementById('toggle-debug-btn');
+const debugConsole = document.getElementById('debug-console');
+const debugOutputText = document.getElementById('debug-output-text');
+
+if (toggleDebugBtn) {
+    toggleDebugBtn.addEventListener('click', () => {
+        debugConsole.classList.toggle('hidden');
+    });
+}
+
 // Modal Elements
 const modal = document.getElementById('roster-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
@@ -244,6 +255,11 @@ function renderResults(data) {
             `;
             itemRes.appendChild(div);
         });
+    }
+
+    // Lógica 4: Panel de Debug XAI
+    if (data.debug_info) {
+        debugOutputText.textContent = JSON.stringify(data.debug_info, null, 2);
     }
 
     resultsArea.classList.remove('hidden');

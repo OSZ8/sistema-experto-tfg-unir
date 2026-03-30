@@ -1,7 +1,8 @@
 class Fact:
-    def __init__(self, key, value):
+    def __init__(self, key, value, source=None):
         self.key = key
         self.value = value
+        self.source = source
 
     def __eq__(self, other):
         return self.key == other.key and self.value == other.value
@@ -38,11 +39,25 @@ class Engine:
             changed = False
             for rule in self.rules:
                 if rule.name not in self.triggered_rules:
-                    if rule.condition(self.facts):
+                    condition_result = rule.condition(self.facts)
+                    if condition_result:
                         rule.action(self)
                         self.triggered_rules.add(rule.name)
+                        
                         if rule.description:
-                            self.explanations.append(rule.description)
+                            # Verify if result is an iterable with specific sources for Explainable AI
+                            if isinstance(condition_result, list) and condition_result:
+                                unique_sources = list(set([str(s) for s in condition_result if s]))
+                                if unique_sources:
+                                    sources_str = ", ".join(unique_sources)
+                                    final_desc = rule.description.replace("{sources}", sources_str)
+                                else:
+                                    final_desc = rule.description.replace("{sources}", "varios de tu equipo")
+                            else:
+                                final_desc = rule.description.replace("{sources}", "el equipo")
+                                
+                            self.explanations.append(final_desc)
+                            
                         changed = True
 
     def get_recommendations(self):

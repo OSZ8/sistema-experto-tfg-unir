@@ -665,3 +665,53 @@ body {
     align-items: center;
     gap: 8px;
 }
+
+/* XAI & Debug Terminal additions */
+.mt-4 { margin-top: 2rem; }
+.mt-2 { margin-top: 1rem; }
+.text-left { text-align: left; }
+.secondary-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    margin-top: 10px;
+    color: var(--gold);
+}
+.secondary-btn:hover { background: rgba(200, 170, 110, 0.1); }
+
+.terminal-console {
+    background: #0f1219;
+    border-radius: 8px;
+    border: 1px solid #333;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    color: #00ffcc;
+    overflow: hidden;
+}
+.terminal-header {
+    background: #1a1e29;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #333;
+}
+.terminal-header .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+.terminal-title {
+    color: #666; font-size: 0.75rem; margin-left: 10px;
+}
+#debug-output-text {
+    padding: 15px;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
