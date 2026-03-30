@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Experto LoL | TFG</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <main class="container">
+        <header class="glass-panel text-center pulse-glow">
+            <h1>Sistema Experto de League of Legends</h1>
+            <p>Trabajo de Fin de Grado - <span class="highlight">Oscar Sánchez García</span></p>
+        </header>
+
+        <section class="selection-area glass-panel slide-up">
+            <h2>Selecciona el Draft Enemigo</h2>
+            <p class="subtitle">Añade hasta 5 campeones enemigos al simulador para disparar las reglas de inferencia.
+            </p>
+
+            <div class="champion-selector">
+                <select id="champ-select" class="hextech-input">
+                    <option value="" disabled selected>Selecciona un campeón de la lista...</option>
+                    {% for champ in champions %}
+                    <option value="{{ champ.id }}">{{ champ.name }} - {{ champ.role }}</option>
+                    {% endfor %}
+                </select>
+                <button id="add-champ-btn" class="btn-hextech">Añadir al Draft</button>
+            </div>
+
+            <div class="draft-slots" id="enemy-draft">
+                <!-- Se inyectan items via JS -->
+            </div>
+
+            <button id="analyze-btn" class="btn-hextech primary-btn disabled" disabled>Analizar Composición</button>
+        </section>
+
+        <div id="results-loader" class="loader hidden">
+            <div class="spinner"></div>
+            <p>Evaluando Árbol de Reglas...</p>
+        </div>
+
+        <section id="results-area" class="results-area hidden glass-panel fade-in">
+            <h2>Resultados del Sistema Experto</h2>
+
+            <div class="rules-box">
+                <h3><i class="icon">📜</i> Reglas Disparadas (Justificación)</h3>
+                <ul id="explanations-list" class="explanations-list">
+                    <!-- Se inyectan reglas -->
+                </ul>
+            </div>
+
+            <div class="grid-2">
+                <div class="result-box">
+                    <h3><i class="icon">⚔️</i> Campeones Recomendados</h3>
+                    <p class="subtitle-small">Basado en porcentajes de victoria y matchups.</p>
+                    <div id="champ-results" class="results-list"></div>
+                </div>
+
+                <div class="result-box">
+                    <h3><i class="icon">🛡️</i> Objetos Recomendados</h3>
+                    <p class="subtitle-small">Basado en el motor iterativo de tags y reglas.</p>
+                    <div id="item-results" class="results-list"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

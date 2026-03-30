@@ -1,0 +1,85 @@
+{
+  "Morellonomicon": {
+    "id": "Morellonomicon",
+    "name": "Morellonomicon",
+    "tags": [
+      "antiheal",
+      "magic_damage",
+      "ap_bruiser",
+      "mage"
+    ],
+    "description": "Corta la curación de los enemigos significativamente al infligir daño mágico. Ideal para magos.",
+    "icon": "morellonomicon.png"
+  },
+  "Recordatorio Letal": {
+    "id": "Recordatorio Letal",
+    "name": "Recordatorio Letal",
+    "tags": [
+      "antiheal",
+      "physical_damage",
+      "armor_penetration",
+      "marksman",
+      "assassin"
+    ],
+    "description": "Proporciona penetración de armadura y corta la curación. Ideal para tiradores y asesinos de daño físico.",
+    "icon": "mortal_reminder.png"
+  },
+  "Malla de Espinas": {
+    "id": "Malla de Espinas",
+    "name": "Malla de Espinas",
+    "tags": [
+      "antiheal",
+      "armor",
+      "tank",
+      "anti_auto_attacker"
+    ],
+    "description": "Devuelve daño mágico y aplica efecto de heridas graves (anti-curaciones) al recibir ataques básicos. Ideal para tanques.",
+    "icon": "thornmail.png"
+  },
+  "Presagio de Randuin": {
+    "id": "Presagio de Randuin",
+    "name": "Presagio de Randuin",
+    "tags": [
+      "anti_crit",
+      "armor",
+      "tank",
+      "anti_auto_attacker"
+    ],
+    "description": "Reduce el daño de los ataques críticos recibidos. Excelente contra equipos enfocados en el impacto crítico.",
+    "icon": "randuins_omen.png"
+  },
+  "Fuerza de la Naturaleza": {
+    "id": "Fuerza de la Naturaleza",
+    "name": "Fuerza de la Naturaleza",
+    "tags": [
+      "magic_resist",
+      "tank",
+      "mobility"
+    ],
+    "description": "Otorga gran resistencia a daño mágico y velocidad de movimiento al recibir daño secuencial. Ideal contra mucho AP.",
+    "icon": "force_of_nature.png"
+  },
+  "Fauces de Malmortius": {
+    "id": "Fauces de Malmortius",
+    "name": "Fauces de Malmortius",
+    "tags": [
+      "magic_resist",
+      "physical_damage",
+      "shield_ap",
+      "bruiser",
+      "assassin"
+    ],
+    "description": "Otorga un escudo que absorbe daño mágico cuando tu vida baja críticamente.",
+    "icon": "maw_of_malmortius.png"
+  },
+  "Cota de Espinas": {
+    "id": "Cota de Espinas",
+    "name": "Cota de Espinas",
+    "tags": [
+      "antiheal",
+      "armor"
+    ],
+    "description": "Versión temprana de la Malla de Espinas.",
+    "icon": "bramble_vest.png"
+  }
+}

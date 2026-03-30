@@ -1,0 +1,154 @@
+{
+  "Malphite": {
+    "id": "Malphite",
+    "name": "Malphite",
+    "role": "Top",
+    "tags": [
+      "tank",
+      "engage",
+      "armor_stacking",
+      "magic_damage"
+    ],
+    "base_winrate": 51.0,
+    "matchups": {
+      "Tryndamere": 54.0,
+      "Aatrox": 48.0,
+      "Sylas": 46.5
+    }
+  },
+  "Tryndamere": {
+    "id": "Tryndamere",
+    "name": "Tryndamere",
+    "role": "Top",
+    "tags": [
+      "fighter",
+      "auto_attacker",
+      "healing_self",
+      "critical_strike"
+    ],
+    "base_winrate": 49.5,
+    "matchups": {
+      "Malphite": 46.0
+    }
+  },
+  "Soraka": {
+    "id": "Soraka",
+    "name": "Soraka",
+    "role": "Support",
+    "tags": [
+      "healing_support",
+      "enchanter",
+      "magic_damage"
+    ],
+    "base_winrate": 50.5,
+    "matchups": {}
+  },
+  "Sylas": {
+    "id": "Sylas",
+    "name": "Sylas",
+    "role": "Mid",
+    "tags": [
+      "assassin",
+      "healing_self",
+      "magic_damage"
+    ],
+    "base_winrate": 50.0,
+    "matchups": {
+      "Malphite": 53.5
+    }
+  },
+  "Aatrox": {
+    "id": "Aatrox",
+    "name": "Aatrox",
+    "role": "Top",
+    "tags": [
+      "bruiser",
+      "healing_self",
+      "physical_damage"
+    ],
+    "base_winrate": 49.0,
+    "matchups": {
+      "Malphite": 52.0
+    }
+  },
+  "Vayne": {
+    "id": "Vayne",
+    "name": "Vayne",
+    "role": "ADC",
+    "tags": [
+      "marksman",
+      "true_damage",
+      "tank_melter",
+      "auto_attacker"
+    ],
+    "base_winrate": 51.5,
+    "matchups": {
+      "Malphite": 52.0,
+      "Soraka": 53.0
+    }
+  },
+  "DrMundo": {
+    "id": "DrMundo",
+    "name": "Dr. Mundo",
+    "role": "Top",
+    "tags": [
+      "tank",
+      "healing_self",
+      "magic_damage"
+    ],
+    "base_winrate": 52.0,
+    "matchups": {
+      "Vayne": 44.0
+    }
+  },
+  "Jinx": {
+    "id": "Jinx",
+    "name": "Jinx",
+    "role": "ADC",
+    "tags": [
+      "marksman",
+      "critical_strike",
+      "auto_attacker"
+    ],
+    "base_winrate": 50.2,
+    "matchups": {}
+  },
+  "Leona": {
+    "id": "Leona",
+    "name": "Leona",
+    "role": "Support",
+    "tags": [
+      "tank",
+      "engage",
+      "cc_heavy"
+    ],
+    "base_winrate": 51.1,
+    "matchups": {
+      "Soraka": 53.0
+    }
+  },
+  "Sejuani": {
+    "id": "Sejuani",
+    "name": "Sejuani",
+    "role": "Jungle",
+    "tags": [
+      "tank",
+      "engage",
+      "cc_heavy"
+    ],
+    "base_winrate": 49.8,
+    "matchups": {}
+  },
+  "LeeSin": {
+    "id": "LeeSin",
+    "name": "Lee Sin",
+    "role": "Jungle",
+    "tags": [
+      "bruiser",
+      "physical_damage",
+      "mobility"
+    ],
+    "base_winrate": 48.5,
+    "matchups": {}
+  }
+}
