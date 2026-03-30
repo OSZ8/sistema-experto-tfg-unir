@@ -61,6 +61,7 @@ def sync_champions(version):
         json.dump(updated_champs, f, indent=4, ensure_ascii=False)
         
     print(f"Éxito: Se han sincronizado {len(updated_champs)} campeones en 'data/champions.json'.")
+    print("Nota: Los winrates, matchups y custom tags asignados manualmente se han conservado intactos.")
 
 if __name__ == "__main__":
     latest_version = fetch_latest_version()
