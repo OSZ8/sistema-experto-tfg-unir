@@ -1,14 +1,7 @@
 import json
 import os
 from .knowledge_base import Engine, Fact, Rule
-
-def load_data():
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    with open(os.path.join(base_dir, 'data', 'champions.json'), 'r', encoding='utf-8') as f:
-        champs = json.load(f)
-    with open(os.path.join(base_dir, 'data', 'items.json'), 'r', encoding='utf-8') as f:
-        items = json.load(f)
-    return champs, items
+from data.data_loader import DataLoader
 
 def create_expert_system():
     engine = Engine()
@@ -126,13 +119,54 @@ def create_expert_system():
         description="El oponente cuenta con Asesinos de daño explosivo. Necesitas objetos de Supervivencia extrema y Estasis temporal."
     ))
 
+    # Rule 8: Ally Needs Frontline
+    def cond_need_tank(facts):
+        ally_count = sum(1 for f in facts if f.key == 'ally_champion_tag')
+        if ally_count == 0: return False
+        tanks = sum(1 for f in facts if f.key == 'ally_champion_tag' and f.value in ('tank', 'bruiser'))
+        return tanks == 0
+
+    def act_need_tank(e):
+        e.add_fact(Fact('recommend_champion_tag', 'tank'))
+        e.add_fact(Fact('recommend_champion_tag', 'bruiser'))
+
+    engine.add_rule(Rule(
+        name="Regla Aliada: Frontline",
+        condition=cond_need_tank,
+        action=act_need_tank,
+        description="Falta capacidad de aguante (Tanque/Bruiser) en tu composición aliada."
+    ))
+
+    # Rule 9: Ally Needs Magic Damage (AP)
+    def cond_need_ap(facts):
+        ally_count = sum(1 for f in facts if f.key == 'ally_champion_tag')
+        if ally_count == 0: return False
+        
+        ap = sum(1 for f in facts if f.key == 'ally_champion_tag' and f.value in ('magic_damage', 'mage'))
+        ad = sum(1 for f in facts if f.key == 'ally_champion_tag' and f.value in ('physical_damage', 'marksman', 'assassin'))
+        
+        return ap == 0 and ad >= 2
+
+    def act_need_ap(e):
+        e.add_fact(Fact('recommend_champion_tag', 'magic_damage'))
+        e.add_fact(Fact('recommend_champion_tag', 'mage'))
+
+    engine.add_rule(Rule(
+        name="Regla Aliada: Daño Mágico",
+        condition=cond_need_ap,
+        action=act_need_ap,
+        description="Falta Daño Mágico en el equipo aliado, el enemigo comprará mucha armadura si no se balancea."
+    ))
+
     return engine
 
 def evaluate_draft(enemy_champions, ally_champions=None):
     if ally_champions is None:
         ally_champions = []
         
-    champs, items = load_data()
+    loader = DataLoader()
+    champs = loader.get_champions()
+    items = loader.get_items()
     engine = create_expert_system()
 
     # Fact loading
@@ -141,6 +175,12 @@ def evaluate_draft(enemy_champions, ally_champions=None):
             champ = champs[champ_id]
             for tag in champ.get('tags', []):
                 engine.add_fact(Fact('enemy_champion_tag', tag))
+                
+    for champ_id in ally_champions:
+        if champ_id in champs:
+            champ = champs[champ_id]
+            for tag in champ.get('tags', []):
+                engine.add_fact(Fact('ally_champion_tag', tag))
     
     # Run Inference Engine
     engine.run()
@@ -166,7 +206,9 @@ def evaluate_draft(enemy_champions, ally_champions=None):
     recommended_items.sort(key=lambda x: x['score'], reverse=True)
 
     # Champions Logic (Matchups vs Base Winrate)
+    recommended_champ_tags = [f.value for f in engine.facts if f.key == 'recommend_champion_tag']
     champ_scores = []
+    
     for candidate_id, candidate_data in champs.items():
         if candidate_id in enemy_champions or candidate_id in ally_champions:
             continue
@@ -181,15 +223,23 @@ def evaluate_draft(enemy_champions, ally_champions=None):
                 matchup_count += 1
                 matchup_wr_sum += matchups[enemy]
         
-        # If we have matchup data, use it mostly (70%) + Base WR (30%)
-        # If no matchup data, just base WR
         if matchup_count > 0:
             avg_matchup_wr = matchup_wr_sum / matchup_count
             final_score = (avg_matchup_wr * 0.7) + (base_wr * 0.3)
-            reason = f"{matchup_count} counters encontrados en el sistema."
+            reason = f"{matchup_count} counters registrados."
         else:
             final_score = base_wr
             reason = f"Winrate base estable."
+            
+        # Synergy Bonus for Allies Component
+        synergy_bonus = 0.0
+        candidate_tags = candidate_data.get('tags', [])
+        intersection = set(recommended_champ_tags).intersection(set(candidate_tags))
+        if intersection:
+            synergy_bonus = len(intersection) * 15.0 # Adds 15 to the heuristic score
+            reason += f" Compensador de draft sinérgico (+15%)."
+            
+        final_score += synergy_bonus
             
         champ_scores.append({
             "id": candidate_data['id'],

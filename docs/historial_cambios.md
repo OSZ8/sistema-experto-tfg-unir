@@ -42,4 +42,15 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
+## 📅 Fase 4: Perfeccionamiento Backend (Validaciones, Caché y Sinergia Aliada)
+**Estado:** Completado
+- **Caché Singleton**: Creada clase estática en `data/data_loader.py`. Se han neutralizado las lecturas consecutivas de archivos de disco (`O(N)`) a la memoria RAM (`O(1)`), acelerando el rendimiento masivo del TFG.
+- **Validaciones REST API**: Fortificación de `app.py`. Ahora la ruta `/api/recommend` cuenta con manejo de errores `400 Bad Request` validando que la estructura JSON esté intacta, que el máximo de campeones no exceda de 5, y que no existan IDs duplicadas en un Draft.
+- **Lógica de Draft Completo (Aliados)**:
+  - Modificado el motor de inferencia clásico para evaluar un nuevo tipo de hecho (`ally_champion_tag`).
+  - Añadidas las Reglas Reversas: **Regla Frontline** (Detecta si a tu equipo le falta un Tanque) y **Regla Daño Mágico** (Detecta si todo tu equipo es Daño Físico).
+  - Implementado el multiplicador algorítmico Heurístico: Si un campeón suple la necesidad de la regla reversa, adquiere un `+15%` de puntuación extra, haciendo que el Sistema Experto no solo recomiende a quién le hace counter al rival, sino a qué campeón balancea tu equipo.
+
+---
+
 *(Este documento se irá actualizando de forma continua cada vez que implementemos nuevos módulos o correcciones).*

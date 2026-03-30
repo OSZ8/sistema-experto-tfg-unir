@@ -91,3 +91,32 @@ def test_integracion_mixta(engine):
     assert 'survival' in recomendaciones
     # NO debe recomendar anti tanques porque sólo hay 1 tanque
     assert 'armor_penetration' not in recomendaciones
+
+def test_regla_aliada_frontline(engine):
+    """Prueba que un equipo aliado sin tanques dispare la alerta de Frontline."""
+    engine.add_fact(Fact('ally_champion_tag', 'marksman')) # ADC
+    engine.add_fact(Fact('ally_champion_tag', 'mage')) # Mid
+    engine.run()
+    
+    recomendaciones = [f.value for f in engine.facts if f.key == 'recommend_champion_tag']
+    assert 'tank' in recomendaciones
+    assert 'bruiser' in recomendaciones
+    assert "Regla Aliada: Frontline" in engine.triggered_rules
+
+def test_regla_aliada_frontline_satisfecha(engine):
+    """Prueba que si YA hay tanque, no se recomiende tanque obligatoriamente."""
+    engine.add_fact(Fact('ally_champion_tag', 'tank')) 
+    engine.run()
+    
+    recomendaciones = [f.value for f in engine.facts if f.key == 'recommend_champion_tag']
+    assert 'tank' not in recomendaciones
+
+def test_regla_aliada_ap_carente(engine):
+    """Prueba que si hay full AD, pide daño mágico."""
+    engine.add_fact(Fact('ally_champion_tag', 'physical_damage'))
+    engine.add_fact(Fact('ally_champion_tag', 'marksman'))
+    engine.run()
+    
+    recomendaciones = [f.value for f in engine.facts if f.key == 'recommend_champion_tag']
+    assert 'magic_damage' in recomendaciones
+    assert "Regla Aliada: Daño Mágico" in engine.triggered_rules

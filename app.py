@@ -1,32 +1,40 @@
 from flask import Flask, render_template, request, jsonify
 from engine.inference import evaluate_draft
+from data.data_loader import DataLoader
 import json
-import os
 
 app = Flask(__name__)
-
-def load_champions():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(base_dir, 'data', 'champions.json'), 'r', encoding='utf-8') as f:
-        return json.load(f)
+loader = DataLoader()
 
 @app.route('/')
 def index():
-    champions = load_champions()
-    # Sort champions by name for the UI
+    champions = loader.get_champions()
     champs_list = sorted([vars for key, vars in champions.items()], key=lambda x: x['name'])
     return render_template('index.html', champions=champs_list)
 
 @app.route('/api/recommend', methods=['POST'])
 def recommend():
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "Estructura JSON (Payload) inválida o en blanco"}), 400
+
     enemy_draft = data.get('enemy_draft', [])
+    ally_draft = data.get('ally_draft', [])
     
+    # 1. Validación de Longitud (Protección contra Spam)
+    if len(enemy_draft) > 5 or len(ally_draft) > 5:
+        return jsonify({"error": "No puedes seleccionar más de 5 campeones por equipo"}), 400
+        
+    # 2. Validación de Duplicados
+    if len(enemy_draft) != len(set(enemy_draft)) or len(ally_draft) != len(set(ally_draft)):
+        return jsonify({"error": "Existen campeones duplicados en la misma selección"}), 400
+        
+    # 3. Validación Mínima Operacional
     if not enemy_draft:
-        return jsonify({"error": "No se han seleccionado campeones enemigos"}), 400
+        return jsonify({"error": "Debes introducir al menos a un campeón enemigo"}), 400
         
     try:
-        recommendations = evaluate_draft(enemy_draft)
+        recommendations = evaluate_draft(enemy_draft, ally_draft)
         return jsonify({
             "success": True,
             "data": recommendations
