@@ -66,9 +66,9 @@ function renderSlots(draftArray, container, teamType) {
     });
 }
 
-// Global actions
+// Funciones Globales de Limpieza
 window.removeChamp = function (team, idx, event) {
-    event.stopPropagation(); // Evitar que el click se cuele y abra el popup encima de la x
+    event.stopPropagation(); // Previene cierre indeseado.
     if (team === 'ally') allyDraft[idx] = null;
     else enemyDraft[idx] = null;
     initSlots();
@@ -100,7 +100,7 @@ champSearch.addEventListener('input', (e) => {
 function renderRoster(filterText) {
     rosterGrid.innerHTML = '';
 
-    // Evitar que elijamos campeones que ya están escogidos en la partida
+    // Filtra campeones ya seleccionados localmente.
     const allPickedIds = [...allyDraft.filter(c => c).map(c => c.id), ...enemyDraft.filter(c => c).map(c => c.id)];
 
     CHAMPIONS_DATA.forEach(champ => {
@@ -109,7 +109,7 @@ function renderRoster(filterText) {
             const div = document.createElement('div');
             div.className = `roster-item ${isPicked ? 'disabled' : ''}`;
 
-            // Efecto fallback si falla Riot localmente para el TFG (muestra alt text)
+            // Define fallback de imagen en caso offline.
             div.innerHTML = `
                 <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" loading="lazy">
                 <span>${champ.name}</span>
@@ -172,15 +172,15 @@ analyzeBtn.addEventListener('click', async () => {
 
         const data = await response.json();
 
-        // Validación del escudo defensivo 400
+        // Valida escudo defensivo código 400 backend.
         if (data.success) {
             renderResults(data.data);
         } else {
-            alert("Respuesta de API denegada: " + data.error);
+            alert("Respuesta API denegada: " + data.error);
         }
     } catch (e) {
         console.error(e);
-        alert("Fallo de infraestructura con el Backend Sistema Experto.");
+        alert("Fallo de infraestructura con Backend.");
     } finally {
         document.getElementById('results-loader').classList.add('hidden');
     }
@@ -196,7 +196,7 @@ function renderResults(data) {
     champRes.innerHTML = '';
     itemRes.innerHTML = '';
 
-    // Lógica 1: Explicaciones Teóricas
+    // Procesa explicaciones teóricas (XAI).
     if (!data.explanations || data.explanations.length === 0) {
         expList.innerHTML = '<li>No se han detonado reglas críticas en tu contra. Sinergia estándar.</li>';
     } else {
@@ -207,16 +207,16 @@ function renderResults(data) {
         });
     }
 
-    // Lógica 2: Panel Campeones Priorizados (Agrupados por Posición)
+    // Renderiza resultados por posición.
     if (!data.recommended_champions_grouped || Object.keys(data.recommended_champions_grouped).length === 0) {
-        champRes.innerHTML = '<span class="result-desc">No existen campeones óptimos calculables bajo estas métricas.</span>';
+        champRes.innerHTML = '<span class="result-desc">No se encontraron campeones óptimos bajo estos criterios.</span>';
     } else {
-        const iconsMap = { 'Top': '🛡️', 'Jungla': '🌴', 'Medio': '🪄', 'ADC': '🏹', 'Apoyo': '💖' };
+        const iconsMap = { 'Top': '', 'Jungla': '', 'Medio': '', 'ADC': '', 'Apoyo': '' };
 
         for (const [posName, candidates] of Object.entries(data.recommended_champions_grouped)) {
             const block = document.createElement('div');
             block.className = 'role-recommendation-block';
-            block.innerHTML = `<h4 class="role-block-title">${iconsMap[posName] || '💎'} Top 3 Mejores: ${posName.toUpperCase()}</h4>`;
+            block.innerHTML = `<h4 class="role-block-title">Top 3 Mejores: ${posName.toUpperCase()}</h4>`;
             
             candidates.forEach(champ => {
                 const div = document.createElement('div');
@@ -235,16 +235,15 @@ function renderResults(data) {
         }
     }
 
-    // Lógica 3: Panel Objetos Esenciales
+    // Renderiza objetos recomendados.
     if (data.recommended_items.length === 0) {
-        itemRes.innerHTML = '<span class="result-desc">El draft rival no requiere alteraciones dramáticas de inventario.</span>';
+        itemRes.innerHTML = '<span class="result-desc">No requiere cambios dramáticos de inventario.</span>';
     } else {
         data.recommended_items.forEach(item => {
             const tags = item.matching_tags ? item.matching_tags.join(', ') : '';
             const div = document.createElement('div');
             div.className = 'result-row result-item-row fade-in';
 
-            // Se usa el nombre del item como identificador o un fallback
             div.innerHTML = `
                 <div class="result-details">
                     <span class="result-name item-name">${item.name}</span>
@@ -257,7 +256,7 @@ function renderResults(data) {
         });
     }
 
-    // Lógica 4: Panel de Debug XAI
+    // Exporta logs RAW por pantalla en debug terminal.
     if (data.debug_info) {
         debugOutputText.textContent = JSON.stringify(data.debug_info, null, 2);
     }

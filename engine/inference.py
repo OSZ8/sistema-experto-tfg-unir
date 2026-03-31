@@ -6,7 +6,7 @@ from data.data_loader import DataLoader
 def create_expert_system():
     engine = Engine()
 
-    # Rule 1: Anti-Heal
+    # Regla: Anti-Curaciones
     def cond_healing(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value in ('healing_self', 'healing_support')]
         return sources if sources else False
@@ -18,10 +18,10 @@ def create_expert_system():
         name="Regla Anti-Curaciones",
         condition=cond_healing,
         action=act_healing,
-        description="⚠️ Regla Anti-Curaciones disparada por [{sources}]. El equipo enemigo tiene alta capacidad de curación. Recomendamos comprar objetos Cortacuras (Heridas Graves)."
+        description="Regla Anti-Curaciones disparada por [{sources}]. El equipo enemigo tiene alta capacidad de curación. Recomendamos comprar objetos Cortacuras (Heridas Graves)."
     ))
 
-    # Rule 2: Anti-Tanks
+    # Regla: Anti-Tanques
     def cond_tanks(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value == 'tank']
         return sources if len(sources) >= 2 else False
@@ -34,10 +34,10 @@ def create_expert_system():
         name="Regla Anti-Tanques",
         condition=cond_tanks,
         action=act_tanks,
-        description="⚠️ Regla Anti-Tanques activada frente a: [{sources}]. Composición robusta (2 o más tanques). Es vital adquirir Penetración de Armadura y Daño Verdadero."
+        description="Regla Anti-Tanques activada frente a: [{sources}]. Composición robusta (2 o más tanques). Es vital adquirir Penetración de Armadura y Daño Verdadero."
     ))
 
-    # Rule 3: Anti-Autoattacks
+    # Regla: Anti-Ataques Básicos
     def cond_aa(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value in ('auto_attacker', 'marksman')]
         return sources if len(sources) >= 2 else False
@@ -51,10 +51,10 @@ def create_expert_system():
         name="Regla Anti-Ataques Básicos",
         condition=cond_aa,
         action=act_aa,
-        description="⚠️ Regla Anti-Ataques Básicos disparada por presencia de Tiradores/ADCs: [{sources}]. Comprar armadura y reducción de daño progresivo es prioritario."
+        description="Regla Anti-Ataques Básicos disparada por presencia de Tiradores/ADCs: [{sources}]. Comprar armadura y reducción de daño progresivo es prioritario."
     ))
 
-    # Rule 4: Magic Resist
+    # Regla: Resistencia Mágica
     def cond_magic(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value == 'magic_damage']
         return sources if len(sources) >= 2 else False
@@ -66,10 +66,10 @@ def create_expert_system():
         name="Regla Resistencia Mágica",
         condition=cond_magic,
         action=act_magic,
-        description="⚠️ Regla Resistencia Mágica disparada por múltiples fuentes de AP en el rival: [{sources}]. Recomendadas opciones de Resistencia Mágica y escudos hechizo."
+        description="Regla Resistencia Mágica disparada por múltiples fuentes de AP en el rival: [{sources}]. Recomendadas opciones de Resistencia Mágica y escudos hechizo."
     ))
 
-    # Rule 5: Anti-Shields
+    # Regla: Anti-Escudos
     def cond_shields(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value == 'shielding']
         return sources if sources else False
@@ -81,10 +81,10 @@ def create_expert_system():
         name="Regla Anti-Escudos",
         condition=cond_shields,
         action=act_shields,
-        description="⚠️ Regla Anti-Escudos (Mitigación Masiva) detectada por protección otorgada por: [{sources}]. Recomendado adquirir armamento Rompe-Escudos letal."
+        description="Regla Anti-Escudos detectada por protección otorgada por: [{sources}]. Recomendado adquirir armamento Rompe-Escudos letal."
     ))
 
-    # Rule 6: Tenacity (Anti CC)
+    # Regla: Tenacidad (Anti CC)
     def cond_cc(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value == 'cc_heavy']
         return sources if len(sources) >= 2 else False
@@ -96,10 +96,10 @@ def create_expert_system():
         name="Regla Tenacidad",
         condition=cond_cc,
         action=act_cc,
-        description="⚠️ Regla Tenacidad alerta de Cadena de CC (Control de Masas) severa procedente de: [{sources}]. Priorizar opciones de Limpiar o botas de Tenacidad de inmediato."
+        description="Regla Tenacidad encendida por Control de Masas severo procedente de: [{sources}]. Priorizar opciones de Limpiar o botas de Tenacidad."
     ))
 
-    # Rule 7: Survival / Anti-Assassin
+    # Regla: Supervivencia / Anti-Asesinos
     def cond_assassin(facts):
         sources = [f.source for f in facts if f.key == 'enemy_champion_tag' and f.value == 'assassin']
         return sources if sources else False
@@ -112,10 +112,10 @@ def create_expert_system():
         name="Regla Supervivencia",
         condition=cond_assassin,
         action=act_assassin,
-        description="⚠️ Regla Supervivencia detecta un foco Asesino fulminante por la presencia de: [{sources}]. Necesitas objetos de Supervivencia extrema y Estasis temporal."
+        description="Regla Supervivencia detecta un foco Asesino fulminante por presencia de: [{sources}]. Necesitas objetos de Estasis temporal o aguante."
     ))
 
-    # Rule 8: Ally Needs Frontline
+    # Regla: Aliada Needs Frontline
     def cond_need_tank(facts):
         ally_sources = [f.source for f in facts if f.key == 'ally_champion_tag']
         if not ally_sources: return False
@@ -130,10 +130,10 @@ def create_expert_system():
         name="Regla Aliada: Frontline",
         condition=cond_need_tank,
         action=act_need_tank,
-        description="⚠️ Alerta de Sinergia: Tu Composición Aliada actual carece de Frontline sólido (Tanque/Bruiser). Alta prioridad de aguante en próximas selecciones."
+        description="Alerta de Composición: Tu equipo carece de Frontline sólido (Tanque/Bruiser). Alta prioridad de aguante en próximas selecciones."
     ))
 
-    # Rule 9: Ally Needs Magic Damage (AP)
+    # Regla: Aliada Needs Magic Damage (AP)
     def cond_need_ap(facts):
         ally_sources = [f.source for f in facts if f.key == 'ally_champion_tag']
         if not ally_sources: return False
@@ -151,7 +151,7 @@ def create_expert_system():
         name="Regla Aliada: Daño Mágico",
         condition=cond_need_ap,
         action=act_need_ap,
-        description="⚠️ Alerta de Sinergia: Alta concentración de Daño Físico aliado. Se recomienda encarecidamente seleccionar Daño Mágico (AP) para balancear y evitar que el enemigo acumule Armadura pura."
+        description="Alerta de Composición: Alta concentración de Daño Físico aliado. Se recomienda Daño Mágico (AP) para balancear."
     ))
 
     return engine
@@ -167,7 +167,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
     items = loader.get_items()
     engine = create_expert_system()
 
-    # Fact loading
+    # Carga hechos.
     for champ_id in enemy_champions:
         if champ_id in champs:
             champ = champs[champ_id]
@@ -180,10 +180,10 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
             for tag in champ.get('tags', []):
                 engine.add_fact(Fact('ally_champion_tag', tag, source=champ.get('name', champ_id)))
     
-    # Run Inference Engine
+    # Ejecuta motor de inferencia.
     engine.run()
 
-    # Items Logic
+    # Genera lista de items recomendados.
     recommended_item_tags = engine.get_recommendations()
     recommended_items = []
     
@@ -203,7 +203,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
     
     recommended_items.sort(key=lambda x: x['score'], reverse=True)
 
-    # Champions Logic (Matchups vs Base Winrate)
+    # Computa heurísticas de campeones.
     recommended_champ_tags = [f.value for f in engine.facts if f.key == 'recommend_champion_tag']
     champ_scores = []
     
@@ -229,7 +229,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
             final_score = base_wr
             reason = f"Winrate base estable."
             
-        # Synergy Bonus for Allies Component
+        # Calcula sinergia aliada.
         synergy_bonus = 0.0
         candidate_tags = candidate_data.get('tags', [])
         intersection = set(recommended_champ_tags).intersection(set(candidate_tags))
@@ -250,7 +250,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
 
     champ_scores.sort(key=lambda x: x['score'], reverse=True)
 
-    # 1. Determinar posiciones faltantes en el equipo aliado
+    # Determina posiciones faltantes.
     if ally_champions_dict:
         missing_positions = [pos for pos, cid in ally_champions_dict.items() if not cid]
     else:
@@ -258,7 +258,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
 
     grouped_recommendations = {}
     
-    # 2. Para cada posición que falte, devolvemos los 3 mejores campeones (sin repetir posiciones dentro del bloque)
+    # Agrupa los 3 mejores campeones por posición.
     for pos in missing_positions:
         pos_candidates = []
         for champ in champ_scores:

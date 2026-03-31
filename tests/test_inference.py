@@ -8,7 +8,7 @@ def engine():
     return create_expert_system()
 
 def test_regla_anticuraciones(engine):
-    """Prueba que los curanderos activen la recomendación de Cortacuras."""
+    """Verifica regla anti-curaciones."""
     engine.add_fact(Fact('enemy_champion_tag', 'healing_support'))
     engine.run()
     recomendaciones = engine.get_recommendations()
@@ -17,7 +17,7 @@ def test_regla_anticuraciones(engine):
     assert "Regla Anti-Curaciones" in engine.triggered_rules
 
 def test_regla_antitanques(engine):
-    """Prueba que 2 o más tanques activen penetración de armadura."""
+    """Verifica regla anti-tanques."""
     engine.add_fact(Fact('enemy_champion_tag', 'tank'))
     engine.run()
     # Con un tanque no debería dispararse
@@ -31,7 +31,7 @@ def test_regla_antitanques(engine):
     assert 'true_damage' in recomendaciones
 
 def test_regla_antiautoataques(engine):
-    """Prueba que atacantes básicos en masa requieran Armadura defensiva."""
+    """Verifica regla anti-ataques."""
     engine.add_fact(Fact('enemy_champion_tag', 'marksman'))
     engine.add_fact(Fact('enemy_champion_tag', 'auto_attacker'))
     engine.run()
@@ -41,7 +41,7 @@ def test_regla_antiautoataques(engine):
     assert 'anti_crit' in recomendaciones
 
 def test_regla_resistencia_magica(engine):
-    """Prueba mitigación mágica básica."""
+    """Verifica regla resistencia mágica."""
     engine.add_fact(Fact('enemy_champion_tag', 'magic_damage'))
     engine.add_fact(Fact('enemy_champion_tag', 'magic_damage'))
     engine.run()
@@ -49,14 +49,14 @@ def test_regla_resistencia_magica(engine):
     assert 'magic_resist' in engine.get_recommendations()
 
 def test_regla_antiescudos(engine):
-    """Prueba la efectividad de detectar mitigadores de daño masivo."""
+    """Verifica regla anti-escudos."""
     engine.add_fact(Fact('enemy_champion_tag', 'shielding'))
     engine.run()
     
     assert 'anti_shield' in engine.get_recommendations()
 
 def test_regla_tenacidad(engine):
-    """Verifica que pesados controles de adversario disparen Tenacidad."""
+    """Verifica regla tenacidad."""
     # Menos de 2 cc_heavy no debería disparar
     engine.add_fact(Fact('enemy_champion_tag', 'cc_heavy'))
     engine.run()
@@ -67,7 +67,7 @@ def test_regla_tenacidad(engine):
     assert 'tenacity' in engine.get_recommendations()
 
 def test_regla_supervivencia_asesinos(engine):
-    """Verifica que 1 solo asesino ya levante alertas de Supervivencia."""
+    """Verifica regla supervivencia para asesinos."""
     engine.add_fact(Fact('enemy_champion_tag', 'assassin'))
     engine.run()
     
@@ -75,7 +75,7 @@ def test_regla_supervivencia_asesinos(engine):
     assert 'anti_assassin' in engine.get_recommendations()
 
 def test_integracion_mixta(engine):
-    """Prueba un draft enemigo realista mixto (ej. Soraka, Zed, y Malphite)."""
+    """Verifica draft mixto realista."""
     # Soraka (Healing), Zed (Assassin), Malphite (Tank/MagicDamage)
     engine.add_fact(Fact('enemy_champion_tag', 'healing_support'))
     engine.add_fact(Fact('enemy_champion_tag', 'assassin'))
@@ -93,7 +93,7 @@ def test_integracion_mixta(engine):
     assert 'armor_penetration' not in recomendaciones
 
 def test_regla_aliada_frontline(engine):
-    """Prueba que un equipo aliado sin tanques dispare la alerta de Frontline."""
+    """Verifica carencia aliada de frontline."""
     engine.add_fact(Fact('ally_champion_tag', 'marksman')) # ADC
     engine.add_fact(Fact('ally_champion_tag', 'mage')) # Mid
     engine.run()
@@ -104,7 +104,7 @@ def test_regla_aliada_frontline(engine):
     assert "Regla Aliada: Frontline" in engine.triggered_rules
 
 def test_regla_aliada_frontline_satisfecha(engine):
-    """Prueba que si YA hay tanque, no se recomiende tanque obligatoriamente."""
+    """Verifica cumplimiento aliado de frontline."""
     engine.add_fact(Fact('ally_champion_tag', 'tank')) 
     engine.run()
     
@@ -112,7 +112,7 @@ def test_regla_aliada_frontline_satisfecha(engine):
     assert 'tank' not in recomendaciones
 
 def test_regla_aliada_ap_carente(engine):
-    """Prueba que si hay full AD, pide daño mágico."""
+    """Verifica carencia de AP aliado."""
     engine.add_fact(Fact('ally_champion_tag', 'physical_damage'))
     engine.add_fact(Fact('ally_champion_tag', 'marksman'))
     engine.run()
