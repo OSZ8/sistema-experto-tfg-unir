@@ -111,3 +111,13 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Limpieza de Docstrings**: Reajustadas las descripciones largas de funciones mock y test a estándares formales.
 
 ---
+
+## 📅 Fase 11: Inyección Heurística, Cierre de Matchups y Actualización de CDN
+
+**Estado:** Completado
+
+- **Resolución de Assets (UI/CDN)**: Actualizada la directiva base de DataDragon de `14.6` a la ultimísima actualización `16.7.1` permitiendo la lectura de campeones de reciente introducción (ej: *Ambessa*, *Aurora*, *Yunara*).
+- **Graceful Degradation en Imágenes**: Prevención contra roturas visuales por faltas de sincronización del CDN de la API; programado un sistema `onerror` nativo en Javascript que genera al instante un Avatar Hextécnico estético con la Inicial del héroe faltante.
+- **Pivot Auditivo a Heurística Pura (XAI)**: Debido a limitaciones estrictas de Anti-Bots (Cloudflare) que devolvían DOMs vacíos en el scraping asíncrono, se descartó el enfoque del "*Scraping*". El proyecto evoluciona en su lugar hacia un enfoque puramente "*Experto*".
+- **Motor Generador Integrado**: Creado un simulador analítico y algebraico en Python (`generate_heuristics.py`). Utiliza una matriz de contrapesos tácticos y *Ruido Matemático Estocástico* (±1.5%) para auto-crear e inyectar permanentemente a disco más de **29.412 variaciones únicas de Matchups** hiper-creíbles, consolidando el árbol de decisiones completo sin requerir llamadas ni datasets externos.
+- **Higiene de Directorio**: Purgados y eliminados permanentemente los scripts de scraping fallidos y hojas de cálculo masivas (`.xlsx`, `fetch_matchups.py`, `check_dataset.py`) para asegurar un despliegue íntegro del repositorio Git del TFG.
