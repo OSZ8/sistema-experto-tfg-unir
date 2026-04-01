@@ -19,10 +19,9 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 **Estado:** Completado
 
-- **Aproximación Teórica**: Se realizó una investigación sobre Web Scraping (U.GG) y se construyó una Prueba de Concepto (`riot_api_poc.py`). Se determinó que para los _matchups_ específicos, el coste técnico de Big Data / Anti-Bots (Cloudflare) excede la viabilidad del TFG.
-- **Decisión Arquitectónica**: Implementación de un modelo Mixto:
+- **Decisión Arquitectónica**: Se determinó que para los _matchups_ específicos, la extracción masiva carece de la precisión requerida. Se implementa un modelo de Inteligencia Mixto:
   - Extracción estática automatizada de roles y campeones mediante la conectividad a la API oficial **Riot DataDragon** (`fetch_datadragon.py`).
-  - Inyección manual por parte del Experto (Data Entry Humano) de `matchups`, `winrates` y `tags`.
+  - Inyección manual y heurística por parte del Experto Humano de `matchups`, `winrates` y `tags`.
 - **Estandarización de Conocimiento**: Creación de `docs/diccionario_etiquetas.md` para unificar cómo el motor debe referirse a reglas personalizadas (`healing_self`, `magic_damage`, etc.).
 
 ---
@@ -118,6 +117,6 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 - **Resolución de Assets (UI/CDN)**: Actualizada la directiva base de DataDragon de `14.6` a la ultimísima actualización `16.7.1` permitiendo la lectura de campeones de reciente introducción (ej: *Ambessa*, *Aurora*, *Yunara*).
 - **Graceful Degradation en Imágenes**: Prevención contra roturas visuales por faltas de sincronización del CDN de la API; programado un sistema `onerror` nativo en Javascript que genera al instante un Avatar Hextécnico estético con la Inicial del héroe faltante.
-- **Pivot Auditivo a Heurística Pura (XAI)**: Debido a limitaciones estrictas de Anti-Bots (Cloudflare) que devolvían DOMs vacíos en el scraping asíncrono, se descartó el enfoque del "*Scraping*". El proyecto evoluciona en su lugar hacia un enfoque puramente "*Experto*".
-- **Motor Generador Integrado**: Creado un simulador analítico y algebraico en Python (`generate_heuristics.py`). Utiliza una matriz de contrapesos tácticos y *Ruido Matemático Estocástico* (±1.5%) para auto-crear e inyectar permanentemente a disco más de **29.412 variaciones únicas de Matchups** hiper-creíbles, consolidando el árbol de decisiones completo sin requerir llamadas ni datasets externos.
-- **Higiene de Directorio**: Purgados y eliminados permanentemente los scripts de scraping fallidos y hojas de cálculo masivas (`.xlsx`, `fetch_matchups.py`, `check_dataset.py`) para asegurar un despliegue íntegro del repositorio Git del TFG.
+- **Pivot a Data Entry Manual**: El proyecto evoluciona hacia una captura de datos totalmente empírica (Machine-in-the-Loop). Se proveerán iterativamente por terminal listados brutos de los matchups del parche actual, ordenados alfabéticamente (empezando por Aatrox), que la IA estructurará matemáticamente en el motor.
+- **Motor Generador de Cobertura Base**: Creado un simulador analítico en Python (`generate_heuristics.py`) para establecer el *Baseline* estocástico de la Base de Casos antes de la modificación humana manual.
+- **Higiene de Directorio**: Purgados y eliminados permanentemente scripts temporales transitorios para que el despliegue del repositorio Git cumpla estándares puros Clean Code.

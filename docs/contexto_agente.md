@@ -44,15 +44,51 @@ El usuario detesta el código que "parece generado automáticamente por IA".
 
 El usuario te indicará en qué quiere enfocarse a continuación. Las ramas lógicas que dejamos abiertas para el final fueron:
 
-### 1. Integrar API Oficial (Riot Games API) ⏳
-- **Contexto**: Tenemos un esqueleto en `api/riot.py` inicializado con una función cruda.
-- **Acción Pendiente**: Actualmente dependemos del diccionario JSON empaquetado y estático. Se debe integrar conectividad `GET` vía requests hacia los servidores de Riot Games (con clave de desarrollador) para recolectar, procesar u obtener datos paramétricos vitales (como Winrates actualizados) y cruzarlos matemáticamente en `inference.py`.
+### 1. Inyección Semimanual de Datos Empíricos (Machine-in-the-Loop) ⏳
+- **Contexto**: Tras descartar la viabilidad técnica del Web Scraping por sistemas anti-bots (Cloudflare), hemos pivotado hacia un modelo asistido.
+- **Acción Pendiente**: El usuario proveerá recortes estadísticos brutos (winrates de matchups) estáticamente centrados en el **Parche Actual**. Nuestro rol consiste en tomar esos textos puros que el usuario pegue por chat (en orden alfabético, empezando por Aatrox) e inyectarlos algorítmicamente en `data/champions.json` construyendo la matriz del Sistema Experto.
 
 ### 2. Mejoras de Feedback Visual en FrontEnd
 - Añadir pulido de interfaz para las partes que no quedaron listas. Por ejemplo, sistemas de 'Toasts' para reemplazar las feas notificaciones nativas `alert(...)` de Error de Javascript y mejorar la escalabilidad responsive.
 
 ### 3. Asistencia Teórica y Memoria
 - El usuario mencionó que quiere centrarse en pulir la herramienta base para después escribir la **Memoria del TFG**. Podrías necesitar generar pseudocódigo formal de los algoritmos construidos, y documentar la carga O(N) de los tensores.
+
+---
+
+## 🔴 4. TAREA INMEDIATA PENDIENTE (Lee esto primero)
+
+**Estado**: El usuario va a pegarte por chat los winrates de matchups reales de cada campeón, extraídos manualmente de portales estadísticos (Lolalytics, OP.GG, etc.). Tu trabajo es inyectarlos en `data/champions.json`.
+
+### Protocolo de trabajo:
+1. El usuario te pegará un bloque de texto bruto con los matchups de **un campeón** (empezando por **Aatrox** y siguiendo en **orden alfabético**).
+2. Tú debes parsear ese texto y actualizar el campo `"matchups"` de ese campeón dentro de `data/champions.json`.
+3. El formato de matchups en el JSON es: `"matchups": { "NombreRival": winrate_decimal, ... }` donde el winrate es un número entre 0 y 1 (ej: 52.3% → `0.523`).
+4. **Solo se trabaja con datos del parche actual**. No mezclar parches.
+5. Actualmente el JSON tiene matchups heurísticos autogenerados (baseline). Hay que **sustituirlos** por los datos reales que el usuario proporcione.
+
+### Reglas críticas:
+- El campo `"matchups"` usa como clave el **nombre del campeón rival** (no su ID).
+- Cuando el motor de inferencia (`engine/inference.py`, línea ~220) lee estos matchups, hay una normalización automática: si detecta valores ≤1.0 los multiplica por 100. Así que guarda siempre en formato decimal (0.523, no 52.3).
+- Tras cada inyección, el usuario puede verificar visualmente en la web (Frontend) arrastrando campeones al Draft.
+- **No propongas scraping ni automatización externa**. Ya se intentó y fracasó por Cloudflare. El usuario ha decidido explícitamente la vía manual.
+
+### Ejemplo de lo que esperas recibir:
+```
+Aatrox vs Fiora 47.2%
+Aatrox vs Irelia 51.8%
+Aatrox vs Darius 53.1%
+...
+```
+
+Y lo que debes hacer es actualizar en `data/champions.json`, dentro de la entrada de Aatrox:
+```json
+"matchups": {
+    "Fiora": 0.472,
+    "Irelia": 0.518,
+    "Darius": 0.531
+}
+```
 
 ---
 > **Prompt Interno**: Entendido. Revisa las preguntas del usuario tras leer el contexto para continuar desde este punto.
