@@ -1,5 +1,5 @@
 // Constante Académica estática para garantizar la presentación offline en DDragon
-const DD_VERSION = '14.6.1';
+const DD_VERSION = '16.7.1';
 const DD_URL = `https://ddragon.leagueoflegends.com/cdn/${DD_VERSION}/img/champion/`;
 
 let CHAMPIONS_DATA = [];
@@ -50,7 +50,7 @@ function renderSlots(draftArray, container, teamType) {
         if (champ) {
             slot.innerHTML = `
                 <div class="pos-badge-ally">${posLabel}</div>
-                <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" title="${champ.name}" class="slot-img fade-in">
+                <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" title="${champ.name}" class="slot-img fade-in" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${champ.name}&background=1a1e29&color=c8aa6e&size=100&bold=true';">
                 <div class="slot-name">${champ.name}</div>
                 <button class="remove-slot" onclick="removeChamp('${teamType}', ${idx}, event)">×</button>
             `;
@@ -109,9 +109,9 @@ function renderRoster(filterText) {
             const div = document.createElement('div');
             div.className = `roster-item ${isPicked ? 'disabled' : ''}`;
 
-            // Define fallback de imagen en caso offline.
+            // Define fallback genérico estilizado para campeones nuevos que no existan en el CDN
             div.innerHTML = `
-                <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" loading="lazy">
+                <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" loading="lazy" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${champ.name}&background=1a1e29&color=c8aa6e&size=100&bold=true';">
                 <span>${champ.name}</span>
             `;
 
@@ -222,7 +222,7 @@ function renderResults(data) {
                 const div = document.createElement('div');
                 div.className = 'result-row result-champ fade-in';
                 div.innerHTML = `
-                    <img src="${DD_URL}${champ.id}.png" class="result-icon champ-icon" alt="${champ.name}">
+                    <img src="${DD_URL}${champ.id}.png" class="result-icon champ-icon" alt="${champ.name}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${champ.name}&background=1a1e29&color=c8aa6e&size=100&bold=true';">
                     <div class="result-details">
                         <span class="result-name">${champ.name} <span class="badge-role">${champ.role}</span></span>
                         <span class="result-reason">${champ.reason}</span>
