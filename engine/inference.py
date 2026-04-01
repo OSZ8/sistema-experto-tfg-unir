@@ -223,8 +223,13 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
         
         if matchup_count > 0:
             avg_matchup_wr = matchup_wr_sum / matchup_count
+            
+            # Normalización automática: si el JSON guardó 0.52 en vez de 52.0, lo convertimos a porcentaje.
+            if avg_matchup_wr <= 1.0:
+                avg_matchup_wr *= 100.0
+                
             final_score = (avg_matchup_wr * 0.7) + (base_wr * 0.3)
-            reason = f"{matchup_count} counters registrados."
+            reason = f"{matchup_count} counters calculados."
         else:
             final_score = base_wr
             reason = f"Winrate base estable."
