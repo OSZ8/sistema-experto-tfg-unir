@@ -810,9 +810,7 @@
         },
         "role_class": "tank",
         "positions": [
-            "Apoyo",
-            "Top",
-            "Jungla"
+            "Apoyo"
         ]
     },
     "Ambessa": {
@@ -999,9 +997,7 @@
         },
         "role_class": "fighter",
         "positions": [
-            "Medio",
-            "Top",
-            "Jungla"
+            "Top"
         ]
     },
     "Amumu": {
@@ -1564,7 +1560,6 @@
         },
         "role_class": "mage",
         "positions": [
-            "Apoyo",
             "Medio"
         ]
     },
@@ -2501,7 +2496,6 @@
         },
         "role_class": "mage",
         "positions": [
-            "ADC",
             "Medio"
         ]
     },
@@ -2689,8 +2683,7 @@
         },
         "role_class": "support",
         "positions": [
-            "Apoyo",
-            "Medio"
+            "Apoyo"
         ]
     },
     "Belveth": {
@@ -2876,7 +2869,6 @@
         },
         "role_class": "fighter",
         "positions": [
-            "Top",
             "Jungla"
         ]
     },
@@ -3253,8 +3245,7 @@
         },
         "role_class": "mage",
         "positions": [
-            "Apoyo",
-            "Medio"
+            "Apoyo"
         ]
     },
     "Braum": {
@@ -3628,8 +3619,6 @@
         },
         "role_class": "fighter",
         "positions": [
-            "Medio",
-            "Top",
             "Jungla"
         ]
     },
@@ -22982,9 +22971,7 @@
         },
         "role_class": "tank",
         "positions": [
-            "Medio",
-            "Top",
-            "Jungla"
+            "Top"
         ]
     },
     "Sion": {
@@ -25616,8 +25603,7 @@
         },
         "role_class": "marksman",
         "positions": [
-            "ADC",
-            "Medio"
+            "Top"
         ]
     },
     "Thresh": {
@@ -27312,7 +27298,8 @@
         "role_class": "marksman",
         "positions": [
             "ADC",
-            "Medio"
+            "Medio",
+            "Top"
         ]
     },
     "Vayne": {

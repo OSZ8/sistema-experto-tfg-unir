@@ -1,174 +1,95 @@
-import requests
-import time
-import json
+import sys
 import os
+import time
 import csv
 from collections import defaultdict
 
-# Extracción de matchups de la API de Riot (Rango Esmeralda+)
-# Procesa el historial de jugadores para calcular Win Rates reales.
+# Añadir raíz del proyecto al path para importar api/
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from api.riot import get_league_entries, get_match_ids, get_match_detail
 
-# API Key
-API_KEY = "RGAPI-3d95ba04-1787-43a8-800c-3e4531e6a4d6"
+# Extracción de matchups (Rango Esmeralda+) → exporta raw_matchups.csv
 
-# Endpoints estandarizados
-REGION = "euw1" # Usado para invocadores y ligas
-ROUTING = "europe" # Usado para las partidas (Match V5)
+TOTAL_PLAYERS_TO_SCAN = 3
+TOTAL_MATCHES_PER_PLAYER = 5
 
-HEADERS = {
-    "X-Riot-Token": API_KEY
-}
 
 def get_emerald_players(page=1):
-    """
-    Obtiene una página de jugadores en la liga ESMERALDA I.
-    Retorna una lista de Summoner IDs.
-    """
-    print(f"[1] Obteniendo jugadores Esmeralda (Página {page})...")
-    url = f"https://{REGION}.api.riotgames.com/lol/league/v4/entries/RANKED_SOLO_5x5/EMERALD/I?page={page}"
-    response = requests.get(url, headers=HEADERS)
-    
-    if response.status_code == 200:
-        entries = response.json()
-        # Riot Games API updates replaced summonerId with puuid in some endpoints.
-        # We try to get puuid first, otherwise summonerId.
-        players = []
-        for entry in entries:
-            pid = entry.get("puuid") or entry.get("summonerId")
-            if pid:
-                players.append(pid)
-        return players
-    else:
-        print(f"Error {response.status_code} al obtener jugadores.")
+    print(f"Obteniendo jugadores Esmeralda (página {page})...")
+    entries = get_league_entries(tier="EMERALD", division="I", page=page)
+    if not isinstance(entries, list):
+        print("Error al obtener jugadores.")
+        return []
+    players = []
+    for entry in entries:
+        pid = entry.get("puuid") or entry.get("summonerId")
+        if pid:
+            players.append(pid)
+    return players
+
+
+def analyze_match(match_id):
+    data = get_match_detail(match_id)
+    if 'info' not in data:
         return []
 
-def get_puuid_by_summoner_id(summoner_id):
-    """
-    Convierte el Summoner ID a PUUID, que es el identificador requerido 
-    para la API de historiales de partidas (Match V5).
-    """
-    url = f"https://{REGION}.api.riotgames.com/lol/summoner/v4/summoners/{summoner_id}"
-    response = requests.get(url, headers=HEADERS)
-    
-    if response.status_code == 200:
-        return response.json().get("puuid")
-    return None
-
-def get_recent_matches(puuid, count=50):
-    """
-    Obtiene los IDs de las últimas partidas clasificatorias de un jugador.
-    Se filtra por queue=420 (Ranked Solo/Duo). En producción 'count' rondaría las 100 partidas.
-    """
-    url = f"https://{ROUTING}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?queue=420&start=0&count={count}"
-    response = requests.get(url, headers=HEADERS)
-    
-    if response.status_code == 200:
-        return response.json()
-    return []
-
-def analyze_match_for_matchups(match_id):
-    """
-    Descarga el detalle de la partida, identifica qué campeones se enfrentaron 
-    en la misma posición (por ejemplo, TOP vs TOP) y determina quién ganó.
-    """
-    url = f"https://{ROUTING}.api.riotgames.com/lol/match/v5/matches/{match_id}"
-    response = requests.get(url, headers=HEADERS)
-    
-    if response.status_code != 200:
-        return []
-
-    match_data = response.json()
-    participants = match_data['info']['participants']
-    
-    # Agrupar participantes por posición (TOP, JUNGLE, MID, BOTTOM, UTILITY)
     positions = defaultdict(list)
-    for p in participants:
+    for p in data['info']['participants']:
         pos = p.get('teamPosition')
-        if pos:  # Ignorar posiciones inválidas ("" o None)
-            positions[pos].append({
-                "champion": p['championName'],
-                "win": p['win']
-            })
-            
+        if pos:
+            positions[pos].append({'champion': p['championName'], 'win': p['win']})
+
     matchups = []
-    # Analizar quién le ganó a quién en cada línea
-    for pos, players in positions.items():
+    for players in positions.values():
         if len(players) == 2:
-            p1, p2 = players[0], players[1]
+            p1, p2 = players
             if p1['win']:
-                matchups.append({"winner": p1['champion'], "loser": p2['champion'], "lane": pos})
+                matchups.append((p1['champion'], p2['champion']))
             elif p2['win']:
-                matchups.append({"winner": p2['champion'], "loser": p1['champion'], "lane": pos})
-                
+                matchups.append((p2['champion'], p1['champion']))
     return matchups
+
 
 def main():
     print("Iniciando extracción de datos (Riot API)...")
-    
-    # 1. Obtenemos un bloque de jugadores de Esmeralda (La paginación permite recorrer miles de jugadores)
+
     summoner_ids = get_emerald_players(page=1)
-    
-    # Estructura para almacenar estadísticas globales (Memoria/Consolidado)
-    # Ejemplo: stats["Aatrox"]["Darius"] = {"wins": 10, "losses": 5}
     stats = defaultdict(lambda: defaultdict(lambda: {"wins": 0, "losses": 0}))
-    
-    # IMPORTANTE PARA EL TFG: 
-    # Aquí se limitan los parámetros para poder hacer una demostración en vivo o evitar superar
-    # el Rate Limit de la API en modo desarrollo de forma innecesaria.
-    TOTAL_PLAYERS_TO_SCAN = 3
-    TOTAL_MATCHES_PER_PLAYER = 5
-    
-    for i, summoner_id in enumerate(summoner_ids[:TOTAL_PLAYERS_TO_SCAN]):
-        print(f"\n[+] Procesando Jugador {i+1}/{TOTAL_PLAYERS_TO_SCAN} (Summoner ID: {summoner_id})")
-        
-        # Si la API ya nos devolvió el PUUID, no hace falta buscarlo (Riot Games actualizó esto recientemente)
-        if len(summoner_id) > 65:
-            puuid = summoner_id
-        else:
-            puuid = get_puuid_by_summoner_id(summoner_id)
-            
+
+    for i, pid in enumerate(summoner_ids[:TOTAL_PLAYERS_TO_SCAN]):
+        print(f"\n[+] Jugador {i+1}/{TOTAL_PLAYERS_TO_SCAN} ({pid[:20]}...)")
+
+        # Riot ya devuelve PUUID directamente en League V4
+        puuid = pid if len(pid) > 65 else None
         if not puuid:
-            print("  [!] No se pudo obtener el PUUID. Respetando el Rate limit y saltando...")
-            time.sleep(1.2) 
+            time.sleep(1.2)
             continue
-            
-        matches = get_recent_matches(puuid, count=TOTAL_MATCHES_PER_PLAYER)
-        print(f"  Analizando {len(matches)} partidas recientes...")
-        
-        for match_id in matches:
-            # Rate limit: Riot API permite ~20 peticiones/seg. Ponemos sleep para evitar HTTP 429
-            time.sleep(1) 
-            matchups_in_game = analyze_match_for_matchups(match_id)
-            
-            # Registrar victorias y derrotas en nuestra base de datos para promediar los winrates reales
-            for m in matchups_in_game:
-                winner = m['winner']
-                loser = m['loser']
-                
-                # Win para el ganador
+
+        match_ids = get_match_ids(puuid, count=TOTAL_MATCHES_PER_PLAYER)
+        print(f"  Analizando {len(match_ids)} partidas...")
+
+        for match_id in match_ids:
+            time.sleep(1)
+            for winner, loser in analyze_match(match_id):
                 stats[winner][loser]["wins"] += 1
-                # Loss para el perdedor
                 stats[loser][winner]["losses"] += 1
-                
-        time.sleep(1.5) # Pausa estratégica tras cada jugador
-        
+
+        time.sleep(1.5)
+
     print("\nExtracción completada.")
 
-    # Guardar resultados en CSV para posterior limpieza y análisis
-    output_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw_matchups.csv')
-    output_path = os.path.normpath(output_path)
-
-    with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
+    output_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'data', 'raw_matchups.csv'))
+    with open(output_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
         writer.writerow(['champion', 'enemy', 'wins', 'losses', 'total_games', 'winrate'])
-        for champ, matchups_record in stats.items():
-            for enemy, record in matchups_record.items():
+        for champ, rivals in stats.items():
+            for enemy, record in rivals.items():
                 total = record["wins"] + record["losses"]
                 if total > 0:
-                    winrate = round(record["wins"] / total, 4)
-                    writer.writerow([champ, enemy, record["wins"], record["losses"], total, winrate])
+                    writer.writerow([champ, enemy, record["wins"], record["losses"], total, round(record["wins"] / total, 4)])
 
     print(f"Datos guardados en: {output_path}")
+
 
 if __name__ == "__main__":
     main()

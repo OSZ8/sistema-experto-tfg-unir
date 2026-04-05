@@ -167,7 +167,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
     items = loader.get_items()
     engine = create_expert_system()
 
-    # Carga hechos.
+    # Carga hechos
     for champ_id in enemy_champions:
         if champ_id in champs:
             champ = champs[champ_id]
@@ -180,10 +180,10 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
             for tag in champ.get('tags', []):
                 engine.add_fact(Fact('ally_champion_tag', tag, source=champ.get('name', champ_id)))
     
-    # Ejecuta motor de inferencia.
+    # Ejecuta motor de inferencia
     engine.run()
 
-    # Genera lista de items recomendados.
+    # Genera items recomendados
     recommended_item_tags = engine.get_recommendations()
     recommended_items = []
     
@@ -203,7 +203,7 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
     
     recommended_items.sort(key=lambda x: x['score'], reverse=True)
 
-    # Computa heurísticas de campeones.
+    # Computa heurísticas de campeones
     recommended_champ_tags = [f.value for f in engine.facts if f.key == 'recommend_champion_tag']
     champ_scores = []
     
@@ -224,25 +224,24 @@ def evaluate_draft(enemy_champions, ally_champions_dict=None):
         if matchup_count > 0:
             avg_matchup_wr = matchup_wr_sum / matchup_count
             
-            # Normalización automática: si el JSON guardó 0.52 en vez de 52.0, lo convertimos a porcentaje.
             if avg_matchup_wr <= 1.0:
                 avg_matchup_wr *= 100.0
                 
             final_score = (avg_matchup_wr * 0.7) + (base_wr * 0.3)
-            reason = f"{matchup_count} counters calculados."
+            reason = f"Win rate medio vs. {matchup_count} enemigo{'s' if matchup_count > 1 else ''}: {avg_matchup_wr:.1f}%."
         else:
             final_score = base_wr
-            reason = f"Winrate base estable."
+            reason = "Sin datos de matchup directos. Basado en win rate general."
             
         # Calcula sinergia aliada.
         synergy_bonus = 0.0
         candidate_tags = candidate_data.get('tags', [])
         intersection = set(recommended_champ_tags).intersection(set(candidate_tags))
         if intersection:
-            synergy_bonus = len(intersection) * 15.0 # Adds 15 to the heuristic score
-            reason += f" Compensador de draft sinérgico (+15%)."
+            synergy_bonus = len(intersection) * 3.0
+            reason += f" Sinergia de draft detectada."
             
-        final_score += synergy_bonus
+        final_score = min(final_score + synergy_bonus, 99.0)
             
         champ_scores.append({
             "id": candidate_data['id'],
