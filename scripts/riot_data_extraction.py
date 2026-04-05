@@ -2,6 +2,7 @@ import requests
 import time
 import json
 import os
+import csv
 from collections import defaultdict
 
 # Extracción de matchups de la API de Riot (Rango Esmeralda+)
@@ -152,14 +153,22 @@ def main():
         time.sleep(1.5) # Pausa estratégica tras cada jugador
         
     print("\nExtracción completada.")
-    
-    # Simulación de la escritura en un formato útil (similar a lo que acabaría en champions.json)
-    for champ, matchups_record in list(stats.items())[:5]: # Mostramos 5 personajes a modo de ejemplo
-        for enemy, record in matchups_record.items():
-            total_games = record["wins"] + record["losses"]
-            if total_games > 0:
-                win_rate = (record["wins"] / total_games) * 100
-                print(f"[{champ} vs {enemy}] Muestras: {total_games} | Win Rate {champ}: {win_rate:.1f}%")
+
+    # Guardar resultados en CSV para posterior limpieza y análisis
+    output_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw_matchups.csv')
+    output_path = os.path.normpath(output_path)
+
+    with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['champion', 'enemy', 'wins', 'losses', 'total_games', 'winrate'])
+        for champ, matchups_record in stats.items():
+            for enemy, record in matchups_record.items():
+                total = record["wins"] + record["losses"]
+                if total > 0:
+                    winrate = round(record["wins"] / total, 4)
+                    writer.writerow([champ, enemy, record["wins"], record["losses"], total, winrate])
+
+    print(f"Datos guardados en: {output_path}")
 
 if __name__ == "__main__":
     main()
