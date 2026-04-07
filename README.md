@@ -10,19 +10,20 @@ El objetivo de este sistema experto es asistir a los jugadores de _League of Leg
 
 - **Lenguaje:** Python
 - **Framework Web:** Flask
-- **Almacenamiento:** Archivos JSON (Base de hechos estática)
-- **Lógica:** Motor de Inferencia (Sistemas Expertos)
-- **Integración:** Riot Games API (vía `requests`)
+- **Almacenamiento:** SQLite (`knowledge.db`) con fallback a JSON
+- **Lógica:** Motor de Inferencia por Encadenamiento Progresivo (Forward Chaining)
+- **Integración:** Riot Games API y Riot DataDragon CDN (vía `requests`)
 
 ## Estructura del Proyecto
 
-De acuerdo con la metodología de ingeniería, el repositorio se organiza de la siguiente manera (provisionalmente):
 
-- `/api`: Gestión de peticiones a la API de Riot.
-- `/data`: Almacenamiento de datos estáticos de campeones y base de hechos (JSON).
+- `/api`: Cliente de la API de Riot Games.
+- `/data`: Base de conocimiento en SQLite (`knowledge.db`) y fallback JSON (`champions.json`, `items.json`).
 - `/engine`: Núcleo del sistema experto (motor de inferencia y reglas).
-- `/web`: Interfaz de usuario y rutas de Flask.
-- `/tests`: Pruebas unitarias para validar las recomendaciones.
+- `/scripts`: Scripts ETL de carga, migración y asignación de datos.
+- `/templates`: Plantilla HTML de la interfaz.
+- `/static`: Assets CSS y JavaScript del frontend.
+- `/tests`: Pruebas unitarias del motor de inferencia.
 - `/docs`: Documentación técnica y diagramas.
 
 ## Licencia
