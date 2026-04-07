@@ -4,11 +4,11 @@ import time
 import csv
 from collections import defaultdict
 
-# Añadir raíz del proyecto al path para importar api/
+# Inserta raíz del proyecto al path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from api.riot import get_league_entries, get_match_ids, get_match_detail
 
-# Extracción de matchups (Rango Esmeralda+) → exporta raw_matchups.csv
+# Extrae matchups (Esmeralda+) → raw_matchups.csv
 
 TOTAL_PLAYERS_TO_SCAN = 3
 TOTAL_MATCHES_PER_PLAYER = 5
@@ -59,7 +59,6 @@ def main():
     for i, pid in enumerate(summoner_ids[:TOTAL_PLAYERS_TO_SCAN]):
         print(f"\n[+] Jugador {i+1}/{TOTAL_PLAYERS_TO_SCAN} ({pid[:20]}...)")
 
-        # Riot ya devuelve PUUID directamente en League V4
         puuid = pid if len(pid) > 65 else None
         if not puuid:
             time.sleep(1.2)

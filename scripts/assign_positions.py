@@ -42,13 +42,13 @@ for cid, cdata in champions.items():
         if not positions:
             positions = ["Top", "Jungla", "Medio", "ADC", "Apoyo"]
             
-    # Garantizar que no se inserten repetidos preservando orden original aprox
+    # Sin duplicados
     seen = set()
     positions = [x for x in positions if not (x in seen or seen.add(x))]
     
     role = cdata.get('role', 'Desconocido')
-    cdata['role_class'] = role # Guardamos el "Rol/Clase" de Riot puro (ej: Assassin)
-    cdata['positions'] = positions # Guardamos el array de carriles (ej: ["Top", "Mid"])
+    cdata['role_class'] = role
+    cdata['positions'] = positions
     
 with open(champs_path, 'w', encoding='utf-8') as f:
     json.dump(champions, f, indent=2, ensure_ascii=False)

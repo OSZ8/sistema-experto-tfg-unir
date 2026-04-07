@@ -1,7 +1,4 @@
 Flask
 requests
-beautifulsoup4
-python-dotenv
 pytest
-pytest-mock
-pytest-html
+pytest-html

@@ -3,7 +3,7 @@ import json
 import os
 
 def fetch_latest_version():
-    """Obtiene el último número de parche de Riot DataDragon."""
+    """Obtiene el último parche de DataDragon."""
     url = "https://ddragon.leagueoflegends.com/api/versions.json"
     response = requests.get(url)
     if response.status_code == 200:
@@ -12,7 +12,7 @@ def fetch_latest_version():
     return "14.1.1" # Fallback
 
 def sync_champions(version):
-    """Descarga los datos estructurales de los campeones y actualiza el archivo local respetando los winrates/matchups si existen."""
+    """Descarga campeones de DataDragon y fusiona con datos locales."""
     url = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/es_ES/champion.json"
     print(f"Buscando datos estáticos en DataDragon (Versión {version})...")
     
@@ -24,7 +24,6 @@ def sync_champions(version):
     data = response.json()
     champions_data = data['data']
     
-    # Check if local data exists to merge
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     champions_path = os.path.join(base_dir, 'data', 'champions.json')
     
@@ -36,14 +35,12 @@ def sync_champions(version):
     updated_champs = {}
     
     for champ_id, champ_info in champions_data.items():
-        # Extracción de estructura básica
         name = champ_info['name']
         tags = [tag.lower() for tag in champ_info.get('tags', [])]
         
-        # Mezclamos la información (Por ej. roles nativos de la API con los tags custom de nuestro motor o winrates)
         existing = local_champs.get(champ_id, {})
-        
-        # Unificamos Tags de Riot con nuestras Custom Tags (ej. "antiheal", "healing_self" no vienen en Riot, vienen Fighter, Mage)
+
+        # Fusiona tags Riot con tags custom
         custom_tags = existing.get('tags', [])
         combined_tags = list(set(tags + custom_tags))
         
@@ -56,7 +53,6 @@ def sync_champions(version):
             "matchups": existing.get('matchups', {})
         }
     
-    # Escribimos de vuelta al JSON
     with open(champions_path, 'w', encoding='utf-8') as f:
         json.dump(updated_champs, f, indent=4, ensure_ascii=False)
         

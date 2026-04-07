@@ -4,10 +4,7 @@ import os
 
 
 class DataLoader:
-    """
-    Singleton que carga los datos desde SQLite (knowledge.db) en memoria.
-    Si la base de datos no existe, cae de vuelta al JSON original.
-    """
+    """Singleton: carga datos desde SQLite; fallback a JSON."""
     _instance = None
     _champions = None
     _items = None
@@ -25,7 +22,7 @@ class DataLoader:
         if os.path.exists(db_path):
             self._champions = self._load_from_sqlite(db_path)
         else:
-            # Fallback al JSON si aún no se ha ejecutado la migración
+
             champs_path = os.path.join(base_dir, 'data', 'champions.json')
             with open(champs_path, 'r', encoding='utf-8') as f:
                 self._champions = json.load(f)

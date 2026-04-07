@@ -4,7 +4,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
-## 📅 Fase 0: Arquitectura Base Inicial
+## Fase 0: Arquitectura Base Inicial
 
 **Estado:** Completado
 
@@ -15,7 +15,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
-## 📅 Fase 1: Arquitectura de Datos (Data Entry & ETL)
+## Fase 1: Arquitectura de Datos (Data Entry & ETL)
 
 **Estado:** Completado
 
@@ -26,7 +26,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
-## 📅 Fase 2: Expansión de la Base de Conocimiento (Nuevas Reglas)
+## Fase 2: Expansión de la Base de Conocimiento (Nuevas Reglas)
 
 **Estado:** Completado
 
@@ -38,7 +38,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
-## 📅 Fase 3: Validación Académica (Testing Automático)
+## Fase 3: Validación Académica (Testing Automático)
 
 **Estado:** Completado
 
@@ -49,7 +49,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
-## 📅 Fase 4: Perfeccionamiento Backend (Validaciones, Caché y Sinergia Aliada)
+## Fase 4: Perfeccionamiento Backend (Validaciones, Caché y Sinergia Aliada)
 
 **Estado:** Completado
 
@@ -62,7 +62,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 
 ---
 
-## 📅 Fase 5: Rediseño Premium de Interfaz Web (UI/UX)
+## Fase 5: Rediseño Premium de Interfaz Web (UI/UX)
 
 **Estado:** Completado
 
@@ -70,14 +70,13 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Integración DataDragon (CDN)**: La aplicación web extrae renderizados de escudos (Assets PNG) directamente desde la API estática de parche remoto (`14.6.1`) inyectándolos en un Roster fotográfico de campeones con barra de búsqueda para la selección.
 - **Glassmorphism y Estilo**: Migración de `styles.css` a estándares WebGL / e-sports UI usando gradientes dorados (`--gold`), contornos `hextech` (`--cyan`), animaciones de Hover y un modelo responsivo. Todo el output del Sistema Experto (el informe devuelto por Python) aparece con animaciones de opacidad (fade-in) e inyección de miniaturas.
 
-## 📅 Fase 6: Expansión de Base de Conocimientos y Despliegue DevOps
+## Fase 6: Expansión de Base de Conocimientos y Despliegue DevOps
 
 **Estado:** Completado
 
-- **Carga Masiva de Hechos (Riot DataDragon API)**: Ejecutado el pipeline automatizado `fetch_datadragon.py` extrayendo la información oficial del parche remoto para elevar la Base de Datos a la increíble cifra de **172 campeones al completo** presentes en el Título Oficial. El script se fusionó conservando la lógica heurística (`matchups`, `tank`, `shielding` custom tags) de la base original, posibilitando una combinatoria de cientos de miles de cruces de fase de selección.
-- **Isomorfismo de Contenedores (Docker)**: Creados `Dockerfile` y `.dockerignore`. Se ha implementado un flujo de ejecución de Grado de Producción aislando el framework Flask a través del servidor WSGI `Gunicorn` (multihilo). El proyecto es ahora oficialmente un artefacto DevOps "Deploy-Ready" (preparado para ser elevado a Google Cloud, AWS o plataformas equivalentes sin configuración adicional y respetando normas de Ciberseguridad con permisos capados `useradd`). Se añadió `gunicorn` al `requirements.txt`.
+- **Carga Masiva de Hechos (Riot DataDragon API)**: Ejecutado el pipeline automatizado `fetch_datadragon.py` extrayendo la información oficial del parche remoto para elevar la Base de Datos a **172 campeones al completo**. El script se fusionó conservando la lógica heurística (`matchups`, `tank`, `shielding` custom tags) de la base original, posibilitando una combinatoria de cientos de miles de cruces de fase de selección.
 
-## 📅 Fase 7: Algoritmo de Cohesión Espacial (Anti-Solapamiento de Roles)
+## Fase 7: Algoritmo de Cohesión Espacial (Anti-Solapamiento de Roles)
 
 **Estado:** Completado
 
@@ -85,7 +84,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Exclusión Mutua**: El motor iterativo ahora rastrea qué "Roles" han sido ya cubiertos en las cartas de tu Composición Aliada. Acto seguido elimina de raíz todas las recomendaciones matemáticas que pertenezcan a ese mismo Rol para evitar dobles picks.
 - **Multiversatilidad**: El output final garantiza retornar un Top 5 donde existe siempre **1 Campeón Óptimo distinto por cada Rol restante**, asegurándole al usuario (sea Support, Medio o ADC) que siempre tendrá un "Mejor Pick" específico para su calle basándose en pura Inteligencia Artificial aplicada.
 
-## 📅 Fase 8: Mapeo de Posiciones Meta (Top, Jungla, Medio...) y Agrupación Visual
+## Fase 8: Mapeo de Posiciones Meta (Top, Jungla, Medio...) y Agrupación Visual
 
 **Estado:** Completado
 
@@ -93,7 +92,7 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Asignación Semántica de Draft UI**: Los 5 slots de selección aliados han sido titulados (Top, Jungla, Medio, ADC, Apoyo). El motor asume ahora tácitamente el rol que le falte a la composición aliada en base a qué casillas se dejen vacías, permitiendo sobreescribir picks Flexibles (Ej. Vladimir) simplemente arrastrándolos a la casilla de "Medio" o "Top".
 - **Agrupación Modular (DOM)**: El algoritmo heurístico `evaluate_draft` ya no escupe un Top 5 genérico absoluto, sino un Array Anidado (Dict) que agrupa estructuralmente los mejores campeones (Top 3) exclusivos para cada Rol vacante. El UI renderiza esto con nuevas insignias, jerarquía y etiquetas secundarias, multiplicando las opciones estratégicas sin saturar la pantalla.
 
-## 📅 Fase 9: Transparencia "Explainable AI" (XAI) y Modo Debugger
+## Fase 9: Transparencia "Explainable AI" (XAI) y Modo Debugger
 
 **Estado:** Completado
 
@@ -101,22 +100,21 @@ Este documento centraliza todos los hitos, decisiones arquitectónicas y módulo
 - **Traceabilidad**: Ya no dice "Comprar Armadura porque hay atacantes físicos". Ahora indica "Alerta Regla Anti-Ataques Básicos disparada por presencia de Tiradores/ADCs: [Xayah, Vayne]." Nivel académico Matrícula TFG.
 - **Terminal de Debug TFG**: Implementado un botón "Ver Tripas Matemáticas (Debug)" al pie de página que despliega una consola Hextécnica de log de terminal. Imprime en formato JSON raw la puntuación algorítmica y los Matchups sin procesar para enseñarlo al Tribunal.
 
-## 📅 Fase 10: "Clean Code", Refactorización y Sobriedad
+## Fase 10: "Clean Code", Refactorización y Sobriedad
 
 **Estado:** Completado
 
-- **Eliminación de Rastros Decorativos**: Removidos todos los emojis codificados "Hardcoded" (`⚠️`, `🛡️`, `⚔️`, etc.) tanto de motores de inferencia Python como de los encabezados estáticos del DOM. El FrontEnd ahora luce rigurosamente sobrio.
+- **Eliminación de Rastros Decorativos**: Removidos todos los emojis codificados "Hardcoded" tanto de motores de inferencia Python como de los encabezados estáticos del DOM. El FrontEnd ahora luce rigurosamente sobrio.
 - **Minimalismo de Comentarios**: Refactorizada la gramática de los comentarios a tiempo Imperativo de 3ª Persona (i.e. de "_Aquí hacemos una comprobación.._" a "_Valida restricción._"). Eliminadas las explicaciones excesivamente pormenorizadas típicas del código generado automáticamente.
 - **Limpieza de Docstrings**: Reajustadas las descripciones largas de funciones mock y test a estándares formales.
 
 ---
 
-## 📅 Fase 11: Inyección Heurística, Cierre de Matchups y Actualización de CDN
+## Fase 11: Inyección Heurística, Cierre de Matchups y Actualización de CDN
 
 **Estado:** Completado
 
-- **Resolución de Assets (UI/CDN)**: Actualizada la directiva base de DataDragon de `14.6` a la ultimísima actualización `16.7.1` permitiendo la lectura de campeones de reciente introducción (ej: *Ambessa*, *Aurora*, *Yunara*).
+- **Resolución de Assets (UI/CDN)**: Actualizada la directiva base de DataDragon de `14.6` a la ultimísima actualización `16.7.1` permitiendo la lectura de campeones de reciente introducción (ej: _Ambessa_, _Aurora_, _Yunara_).
 - **Graceful Degradation en Imágenes**: Prevención contra roturas visuales por faltas de sincronización del CDN de la API; programado un sistema `onerror` nativo en Javascript que genera al instante un Avatar Hextécnico estético con la Inicial del héroe faltante.
 - **Pivot a Data Entry Manual**: El proyecto evoluciona hacia una captura de datos totalmente empírica (Machine-in-the-Loop). Se proveerán iterativamente por terminal listados brutos de los matchups del parche actual, ordenados alfabéticamente (empezando por Aatrox), que la IA estructurará matemáticamente en el motor.
-- **Motor Generador de Cobertura Base**: Creado un simulador analítico en Python (`generate_heuristics.py`) para establecer el *Baseline* estocástico de la Base de Casos antes de la modificación humana manual.
-- **Higiene de Directorio**: Purgados y eliminados permanentemente scripts temporales transitorios para que el despliegue del repositorio Git cumpla estándares puros Clean Code.
+- **Higiene de Directorio**: Purgados y eliminados permanentemente scripts temporales transitorios para que el repositorio Git cumpla estándares Clean Code.
