@@ -16,7 +16,6 @@ El objetivo de este sistema experto es asistir a los jugadores de _League of Leg
 
 ## Estructura del Proyecto
 
-
 - `/api`: Cliente de la API de Riot Games.
 - `/data`: Base de conocimiento en SQLite (`knowledge.db`) y fallback JSON (`champions.json`, `items.json`).
 - `/engine`: Núcleo del sistema experto (motor de inferencia y reglas).
