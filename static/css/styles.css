@@ -33,7 +33,6 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Subtle background texture */
     background: linear-gradient(rgba(1, 10, 19, 0.8), rgba(1, 10, 19, 0.95));
     z-index: -1;
 }
@@ -55,7 +54,7 @@ body {
     display: none !important;
 }
 
-/* Headers */
+/* Títulos */
 .hex-title {
     font-size: 2.8rem;
     color: var(--gold);
@@ -70,7 +69,7 @@ body {
     font-size: 1.1rem;
 }
 
-/* Arena Layout */
+/* Arena */
 .draft-arena {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -116,7 +115,7 @@ body {
     gap: 0.5rem;
 }
 
-/* Slots UI */
+/* Slots */
 .draft-slot {
     width: 95px;
     height: 135px;
@@ -200,7 +199,7 @@ body {
     display: flex;
 }
 
-/* Buttons */
+/* Botones */
 .action-panel {
     margin-top: 1.5rem;
 }
@@ -240,7 +239,7 @@ body {
     font-weight: 600;
 }
 
-/* Champion Roster Modal */
+/* Modal */
 .modal {
     position: fixed;
     top: 0;
@@ -338,7 +337,7 @@ body {
     height: 100%;
 }
 
-/* Scrollbar custom */
+/* Scrollbar */
 .champion-roster::-webkit-scrollbar {
     width: 8px;
 }
@@ -391,7 +390,7 @@ body {
     filter: grayscale(1);
 }
 
-/* Results Panel */
+/* Resultados */
 .glass-panel {
     background: var(--panel-bg);
     backdrop-filter: blur(var(--blur));
@@ -606,7 +605,7 @@ body {
     animation: popIn 0.5s ease forwards;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 900px) {
     .draft-arena {
         grid-template-columns: 1fr;
@@ -632,7 +631,7 @@ body {
     }
 }
 
-/* Phase 8 UI additions */
+/* Posiciones */
 .pos-badge-ally, .pos-badge-empty {
     font-size: 0.65rem;
     color: var(--gold);
@@ -670,7 +669,7 @@ body {
     gap: 8px;
 }
 
-/* XAI & Debug Terminal additions */
+/* Debug */
 .mt-4 { margin-top: 2rem; }
 .mt-2 { margin-top: 1rem; }
 .text-left { text-align: left; }

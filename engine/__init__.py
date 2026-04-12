@@ -1,1 +1,1 @@
-# Inicialización del módulo del motor de inferencia
+# Motor de inferencia

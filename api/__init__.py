@@ -1,1 +1,1 @@
-# Inicialización del módulo API para Riot Games
+# API Riot Games

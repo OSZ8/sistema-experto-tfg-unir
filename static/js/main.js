@@ -1,19 +1,19 @@
-// Constante Académica estática para garantizar la presentación offline en DDragon
+// Versión CDN DataDragon
 const DD_VERSION = '16.7.1';
 const DD_URL = `https://ddragon.leagueoflegends.com/cdn/${DD_VERSION}/img/champion/`;
 
 let CHAMPIONS_DATA = [];
 let allyDraft = [null, null, null, null, null];
 let enemyDraft = [null, null, null, null, null];
-let activeSlot = null; // Guardará a qué equipo y slot corresponde el popup Modal
+let activeSlot = null; // { team, index } del slot activo
 
-// DOM Pointers
+// DOM
 const allyContainer = document.getElementById('ally-slots');
 const enemyContainer = document.getElementById('enemy-slots');
 const analyzeBtn = document.getElementById('analyze-btn');
 const draftWarning = document.getElementById('draft-warning');
 
-// Debug Console Elements
+// Debug
 const toggleDebugBtn = document.getElementById('toggle-debug-btn');
 const debugConsole = document.getElementById('debug-console');
 const debugOutputText = document.getElementById('debug-output-text');
@@ -24,14 +24,14 @@ if (toggleDebugBtn) {
     });
 }
 
-// Modal Elements
+// Modal
 const modal = document.getElementById('roster-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const champSearch = document.getElementById('champ-search');
 const rosterGrid = document.getElementById('champion-roster');
 const modalTitle = document.getElementById('modal-title');
 
-// Startup UI Builder
+// Init
 function initSlots() {
     renderSlots(allyDraft, allyContainer, 'ally');
     renderSlots(enemyDraft, enemyContainer, 'enemy');
@@ -66,9 +66,9 @@ function renderSlots(draftArray, container, teamType) {
     });
 }
 
-// Funciones Globales de Limpieza
+// Limpieza
 window.removeChamp = function (team, idx, event) {
-    event.stopPropagation(); // Previene cierre indeseado.
+    event.stopPropagation();
     if (team === 'ally') allyDraft[idx] = null;
     else enemyDraft[idx] = null;
     initSlots();
@@ -92,7 +92,7 @@ function closeModal() {
 closeModalBtn.onclick = closeModal;
 modal.querySelector('.modal-bg').onclick = closeModal;
 
-// Input en tiempo real de cuadrícula
+// Búsqueda en tiempo real
 champSearch.addEventListener('input', (e) => {
     renderRoster(e.target.value.toLowerCase());
 });
@@ -100,7 +100,7 @@ champSearch.addEventListener('input', (e) => {
 function renderRoster(filterText) {
     rosterGrid.innerHTML = '';
 
-    // Filtra campeones ya seleccionados localmente.
+    // Excluye picks activos
     const allPickedIds = [...allyDraft.filter(c => c).map(c => c.id), ...enemyDraft.filter(c => c).map(c => c.id)];
 
     CHAMPIONS_DATA.forEach(champ => {
@@ -109,7 +109,7 @@ function renderRoster(filterText) {
             const div = document.createElement('div');
             div.className = `roster-item ${isPicked ? 'disabled' : ''}`;
 
-            // Define fallback genérico estilizado para campeones nuevos que no existan en el CDN
+            // Fallback CDN
             div.innerHTML = `
                 <img src="${DD_URL}${champ.id}.png" alt="${champ.name}" loading="lazy" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${champ.name}&background=1a1e29&color=c8aa6e&size=100&bold=true';">
                 <span>${champ.name}</span>
@@ -147,9 +147,7 @@ function checkAnalyzeState() {
     }
 }
 
-// -----------------------------------------
-// REST API Communication a Backend App.py
-// -----------------------------------------
+// API
 analyzeBtn.addEventListener('click', async () => {
     const enemy_draft = enemyDraft.filter(c => c).map(c => c.id);
     const ally_draft = {};
@@ -172,7 +170,7 @@ analyzeBtn.addEventListener('click', async () => {
 
         const data = await response.json();
 
-        // Valida escudo defensivo código 400 backend.
+        // Valida respuesta
         if (data.success) {
             renderResults(data.data);
         } else {
@@ -196,7 +194,7 @@ function renderResults(data) {
     champRes.innerHTML = '';
     itemRes.innerHTML = '';
 
-    // Procesa explicaciones teóricas (XAI).
+    // Explicaciones XAI
     if (!data.explanations || data.explanations.length === 0) {
         expList.innerHTML = '<li>No se han detonado reglas críticas en tu contra. Sinergia estándar.</li>';
     } else {
@@ -207,7 +205,7 @@ function renderResults(data) {
         });
     }
 
-    // Renderiza resultados por posición.
+    // Campeones por posición
     if (!data.recommended_champions_grouped || Object.keys(data.recommended_champions_grouped).length === 0) {
         champRes.innerHTML = '<span class="result-desc">No se encontraron campeones óptimos bajo estos criterios.</span>';
     } else {
@@ -235,7 +233,7 @@ function renderResults(data) {
         }
     }
 
-    // Renderiza objetos recomendados.
+    // Objetos
     if (data.recommended_items.length === 0) {
         itemRes.innerHTML = '<span class="result-desc">No requiere cambios dramáticos de inventario.</span>';
     } else {
@@ -256,7 +254,7 @@ function renderResults(data) {
         });
     }
 
-    // Exporta logs RAW por pantalla en debug terminal.
+    // Debug info
     if (data.debug_info) {
         debugOutputText.textContent = JSON.stringify(data.debug_info, null, 2);
     }
@@ -267,7 +265,7 @@ function renderResults(data) {
     }, 150);
 }
 
-// Start application
+// Arranque
 async function startApp() {
     try {
         const response = await fetch('/api/champions');

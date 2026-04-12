@@ -23,20 +23,20 @@ def recommend():
         return jsonify({"error": "Estructura JSON (Payload) inválida o en blanco"}), 400
 
     enemy_draft = data.get('enemy_draft', [])
-    ally_draft_dict = data.get('ally_draft', {}) # Dict: {"Top": "A", "Jungla": "B"}
+    ally_draft_dict = data.get('ally_draft', {})
     
-    # Extrae identificadores aliados.
+    # IDs aliados
     ally_draft = [cid for cid in ally_draft_dict.values() if cid]
 
-    # Valida longitud máxima.
+    # Longitud
     if len(enemy_draft) > 5 or len(ally_draft) > 5:
         return jsonify({"error": "No puedes seleccionar más de 5 campeones por equipo"}), 400
         
-    # Valida duplicados.
+    # Duplicados
     if len(enemy_draft) != len(set(enemy_draft)) or len(ally_draft) != len(set(ally_draft)):
         return jsonify({"error": "Existen campeones duplicados en la misma selección"}), 400
         
-    # Valida mínimo operacional.
+    # Mínimo
     if not enemy_draft:
         return jsonify({"error": "Debes introducir al menos a un campeón enemigo"}), 400
         

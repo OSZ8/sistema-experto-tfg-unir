@@ -12,7 +12,7 @@
 <body>
     <div class="background-global"></div>
 
-    <!-- Módulo Central -->
+
     <main class="container">
         <header class="text-center slide-up">
             <h1 class="hex-title">Draft</h1>
@@ -20,19 +20,19 @@
         </header>
 
         <section class="draft-arena">
-            <!-- Ally Team -->
+            <!-- Aliados -->
             <div class="team-panel ally-panel">
                 <h2 class="team-title ally-title">EQUIPO ALIADO (Sinergia)</h2>
                 <div class="slots-container" id="ally-slots">
-                    <!-- JS Inyecta 5 Slots -->
+
                 </div>
             </div>
 
-            <!-- Enemy Team -->
+            <!-- Rivales -->
             <div class="team-panel enemy-panel">
                 <h2 class="team-title enemy-title">EQUIPO RIVAL (Amenazas)</h2>
                 <div class="slots-container" id="enemy-slots">
-                    <!-- JS Inyecta 5 Slots -->
+
                 </div>
             </div>
         </section>
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <!-- Panel de Trazabilidad y XAI -->
+            <!-- Debug -->
             <div class="debug-panel-wrapper mt-4 text-center">
                 <button id="toggle-debug-btn" class="btn-hextech secondary-btn">Ver Registro (Debug)</button>
                 <div id="debug-console" class="hidden terminal-console mt-2 text-left">
@@ -87,7 +87,7 @@
         </section>
     </main>
 
-    <!-- Modal Roster Selección -->
+    <!-- Modal -->
     <div id="roster-modal" class="modal hidden">
         <div class="modal-bg"></div>
         <div class="modal-content glass-panel">
@@ -100,12 +100,12 @@
                     placeholder="Escribe para buscar un campeón..." autocomplete="off">
             </div>
             <div class="champion-roster" id="champion-roster">
-                <!-- JS Inyecta iconos DataDragon -->
+
             </div>
         </div>
     </div>
 
-    <!-- Inyección de código JS cliente puro -->
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 

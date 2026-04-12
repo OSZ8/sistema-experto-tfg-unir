@@ -1,8 +1,4 @@
-"""
-Migra champions.json a una base de datos SQLite (data/knowledge.db).
-Crea dos tablas: champions y matchups.
-Ejecutar una sola vez (o cuando se actualice el JSON).
-"""
+"""Migra champions.json a SQLite (knowledge.db). Ejecutar una vez."""
 import json
 import sqlite3
 import os

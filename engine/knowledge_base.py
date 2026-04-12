@@ -16,8 +16,8 @@ class Fact:
 class Rule:
     def __init__(self, name, condition, action, description=""):
         self.name = name
-        self.condition = condition  # function taking a set of facts, returns bool
-        self.action = action  # function taking the engine, adds facts
+        self.condition = condition  # facts -> bool
+        self.action = action  # engine -> None
         self.description = description
 
 class Engine:
@@ -45,7 +45,7 @@ class Engine:
                         self.triggered_rules.add(rule.name)
                         
                         if rule.description:
-                            # Verify if result is an iterable with specific sources for Explainable AI
+                            # Extrae fuentes para XAI
                             if isinstance(condition_result, list) and condition_result:
                                 unique_sources = list(set([str(s) for s in condition_result if s]))
                                 if unique_sources:
