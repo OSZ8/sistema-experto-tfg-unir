@@ -1,7 +1,7 @@
 import requests
 import os
 
-API_KEY = os.getenv("RIOT_API_KEY", "RGAPI-3d95ba04-1787-43a8-800c-3e4531e6a4d6")
+API_KEY = os.getenv("RIOT_API_KEY", "RGAPI-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX")
 HEADERS = {"X-Riot-Token": API_KEY}
 REGION = "euw1"
 ROUTING = "europe"
